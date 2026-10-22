@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ytTheme</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body class="lull-ui">
+    <header class="top">
+      <img src="../../icons/icon48.png" alt="" width="26" height="26" />
+      <div class="brand">
+        <b>ytTheme</b>
+        <span>Calm YouTube</span>
+      </div>
+    </header>
+    <nav class="tabs" role="tablist" aria-label="Settings">
+      <button role="tab" data-tab="yt">YouTube</button>
+      <button role="tab" data-tab="design">Design</button>
+    </nav>
+    <main id="panel" role="tabpanel"></main>
+    <footer class="foot">
+      <span class="tip">Tip: the ✦ button on the page customizes it in place.</span>
+      <button class="l-btn" id="all" type="button">All settings</button>
+    </footer>
+    <script src="../shared/wallpapers.js"></script>
+    <script src="../shared/settings.js"></script>
+    <script src="../shared/ui.js"></script>
+    <script src="../content/shared/mood.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

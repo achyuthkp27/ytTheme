@@ -1,0 +1,412 @@
+/* YouTube cleanup. Every rule is gated by an attribute that core.js mirrors
+   from settings, so toggling a switch applies without a reload. */
+
+/* Elements a script decided to hide (blocked channel, word, watched, ad). */
+html[data-lull] :is([data-lull-hidden], [data-lull-out]) {
+  display: none !important;
+}
+
+/* ---- Shorts ------------------------------------------------------------- */
+html[data-lull-hide-shorts] :is(
+  ytd-rich-shelf-renderer[is-shorts],
+  ytd-reel-shelf-renderer,
+  ytd-reel-item-renderer,
+  ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+  grid-shelf-view-model:has(ytm-shorts-lockup-view-model, ytm-shorts-lockup-view-model-v2),
+  ytd-rich-item-renderer:has(ytm-shorts-lockup-view-model, ytm-shorts-lockup-view-model-v2, a[href^="/shorts/"]),
+  ytd-video-renderer:has(a#thumbnail[href^="/shorts/"]),
+  ytd-grid-video-renderer:has(a#thumbnail[href^="/shorts/"]),
+  ytd-compact-video-renderer:has(a[href^="/shorts/"]),
+  yt-lockup-view-model:has(a[href^="/shorts/"]),
+  ytd-notification-renderer:has(a[href^="/shorts/"]),
+  ytd-guide-entry-renderer:has(a[href="/shorts/"], a[title="Shorts"]),
+  ytd-mini-guide-entry-renderer:has(a[href="/shorts/"], a[title="Shorts"]),
+  ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+  yt-tab-shape[tab-title="Shorts"]
+) {
+  display: none !important;
+}
+
+/* ---- Games (YouTube Playables) — left alone on the Playables page itself. */
+html[data-lull-hide-games]:not([data-lull-page="playables"]) :is(
+  ytd-rich-section-renderer:has(ytd-mini-game-card-view-model, a[href*="/playables"]),
+  ytd-rich-shelf-renderer:has(ytd-mini-game-card-view-model, a[href*="/playables"]),
+  ytd-rich-item-renderer:has(ytd-mini-game-card-view-model, a[href*="/playables"]),
+  grid-shelf-view-model:has(ytd-mini-game-card-view-model, a[href*="/playables"]),
+  ytd-item-section-renderer:has(ytd-mini-game-card-view-model),
+  ytd-mini-game-card-view-model
+) {
+  display: none !important;
+}
+
+html[data-lull-hide-games] :is(
+  ytd-guide-entry-renderer:has(a[href*="/playables"], a[href^="/gaming"]),
+  ytd-mini-guide-entry-renderer:has(a[href*="/playables"], a[href^="/gaming"])
+) {
+  display: none !important;
+}
+
+/* ---- Topic chips ------------------------------------------------------- */
+html[data-lull-hide-chips] :is(
+  ytd-browse ytd-feed-filter-chip-bar-renderer,
+  ytd-rich-section-renderer:has(ytd-chips-shelf-with-video-shelf-renderer, chips-shelf-view-model),
+  ytd-watch-flexy #related yt-related-chip-cloud-renderer
+) {
+  display: none !important;
+}
+
+/* ---- Mixes -------------------------------------------------------------- */
+html[data-lull-hide-mixes] :is(
+  ytd-radio-renderer,
+  ytd-compact-radio-renderer,
+  ytd-rich-item-renderer:has(a[href*="start_radio=1"]),
+  yt-lockup-view-model:has(a[href*="start_radio=1"])
+) {
+  display: none !important;
+}
+
+/* ---- Tidy sidebar: Explore, More from YouTube, settings links, footer --- */
+html[data-lull-tidy-sidebar] ytd-guide-renderer :is(
+  #footer,
+  ytd-guide-signin-promo-renderer,
+  ytd-guide-section-renderer:has(a[href^="/feed/storefront"], a[href="/premium"], a[href*="music.youtube.com"], a[href^="/feed/trending"], a[href^="/gaming"], a[href^="/reporthistory"], a[href^="/account"])
+) {
+  display: none !important;
+}
+
+/* ---- Ads ---------------------------------------------------------------- */
+html[data-lull-hide-ads] :is(
+  ytd-ad-slot-renderer,
+  ytd-in-feed-ad-layout-renderer,
+  ytd-banner-promo-renderer,
+  ytd-statement-banner-renderer,
+  ytd-promoted-sparkles-web-renderer,
+  ytd-promoted-sparkles-text-search-renderer,
+  ytd-promoted-video-renderer,
+  ytd-display-ad-renderer,
+  ytd-compact-promoted-video-renderer,
+  ytd-action-companion-ad-renderer,
+  ytd-companion-slot-renderer,
+  ytd-player-legacy-desktop-watch-ads-renderer,
+  ytd-search-pyv-renderer,
+  ytd-merch-shelf-renderer,
+  ytd-brand-video-singleton-renderer,
+  ytd-brand-video-shelf-renderer,
+  ytd-primetime-promo-renderer,
+  ytd-mealbar-promo-renderer,
+  yt-mealbar-promo-renderer,
+  ytd-ad-inline-playback-meta-block,
+  #masthead-ad,
+  #player-ads,
+  ytd-rich-item-renderer:has(ytd-ad-slot-renderer),
+  ytd-rich-section-renderer:has(ytd-statement-banner-renderer, ytd-brand-video-shelf-renderer, ytd-primetime-promo-renderer),
+  ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"],
+  tp-yt-paper-dialog:has(yt-mealbar-promo-renderer, ytd-mealbar-promo-renderer),
+  .ytp-ad-overlay-container,
+  .ytp-ad-image-overlay,
+  .ytp-ad-text-overlay,
+  .ytp-featured-product
+) {
+  display: none !important;
+}
+
+/* While an ad is being skipped, keep it out of sight. */
+html[data-lull-skip-video-ads] .html5-video-player.ad-showing video {
+  opacity: 0 !important;
+}
+
+/* ---- Recommendations ---------------------------------------------------- */
+html[data-lull-hide-home-feed] ytd-browse[page-subtype="home"] :is(ytd-rich-grid-renderer, #header ytd-feed-filter-chip-bar-renderer, #chips-wrapper) {
+  display: none !important;
+}
+
+html[data-lull-hide-related] ytd-watch-flexy :is(#related, ytd-watch-next-secondary-results-renderer) {
+  display: none !important;
+}
+
+html[data-lull-hide-end-screens] :is(
+  .ytp-ce-element,
+  .ytp-endscreen-content,
+  .html5-endscreen,
+  .ytp-autonav-endscreen,
+  .ytp-autonav-endscreen-countdown-overlay,
+  .videowall-endscreen
+) {
+  display: none !important;
+}
+
+html[data-lull-hide-comments] :is(
+  ytd-comments#comments,
+  ytd-item-section-renderer[section-identifier="comment-item-section"],
+  ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-comments-section"],
+  ytd-comments-entry-point-header-renderer
+) {
+  display: none !important;
+}
+
+/* ---- Cleaner player ----------------------------------------------------- */
+html[data-lull-clean-player] :is(
+  .ytp-paid-content-overlay,
+  .iv-branding,
+  .annotation,
+  .ytp-cards-teaser,
+  .ytp-cards-button,
+  .ytp-suggested-action,
+  .ytp-pause-overlay,
+  .ytp-pause-overlay-container,
+  .ytp-fullscreen-grid,
+  .ytp-fullerscreen-edu-button,
+  .ytp-info-panel-preview,
+  .ytp-iv-player-content,
+  .ytp-chrome-top-buttons
+) {
+  display: none !important;
+}
+
+html[data-lull-clean-player] .html5-video-player:not(.ytp-autohide) .ytp-gradient-bottom {
+  opacity: 0.55;
+}
+
+/* ---- Dislikes and the like bar ------------------------------------------ */
+html[data-lull-dislikes] dislike-button-view-model button.lull-has-count {
+  width: auto !important;
+  padding: 0 14px 0 10px !important;
+  gap: 6px;
+}
+
+.lull-dislike-count {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 36px;
+  white-space: nowrap;
+}
+
+html:not([data-lull-dislikes]) .lull-dislike-count,
+html:not([data-lull-like-bar]) .lull-likebar {
+  display: none !important;
+}
+
+segmented-like-dislike-button-view-model:has(.lull-likebar) {
+  position: relative;
+}
+
+.lull-likebar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -5px;
+  height: 3px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--yt-sys-color-baseline--text-disabled, var(--yt-spec-text-disabled, rgba(128, 128, 128, 0.45)));
+  pointer-events: auto;
+}
+
+.lull-likebar > i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--lull-accent, var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f)));
+  transition: width 0.4s ease;
+}
+
+/* ---- Menu actions (⋮) --------------------------------------------------- */
+.lull-menu {
+  border-top: 1px solid var(--yt-sys-color-baseline--tonal-background, var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2)));
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+.lull-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 36px;
+  padding: 0 36px 0 16px;
+  font: 400 14px/20px Roboto, Arial, sans-serif;
+  color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.lull-menu-item:hover,
+.lull-menu-item:focus-visible {
+  background: var(--yt-sys-color-baseline--tonal-background, var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15)));
+  outline: none;
+}
+
+.lull-menu-item svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.lull-menu-item b {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+/* ---- Quick "Not interested" --------------------------------------------- */
+.ytLockupViewModelMetadata {
+  position: relative;
+}
+
+.lull-ni {
+  position: absolute;
+  top: 0;
+  right: 36px;
+  z-index: 4;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--yt-sys-color-baseline--text-primary, #0f0f0f);
+  background: var(--yt-sys-color-baseline--tonal-background, rgba(128, 128, 128, 0.18));
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.lull-ni svg {
+  width: 17px;
+  height: 17px;
+}
+
+:is(ytd-rich-item-renderer, yt-lockup-view-model):hover .lull-ni,
+.lull-ni:focus-visible {
+  opacity: 1;
+}
+
+.lull-ni:hover,
+.lull-ni:focus-visible {
+  background: #e5484d;
+  color: #fff;
+  outline: none;
+}
+
+html:not([data-lull-quick-not-interested]) .lull-ni {
+  display: none;
+}
+
+/* Menus opened by the quick button stay out of sight while it works. */
+html.lull-quiet-menu ytd-popup-container tp-yt-iron-dropdown {
+  opacity: 0 !important;
+}
+
+/* ---- Sidebar shortcuts -------------------------------------------------- */
+.lull-shortcuts {
+  padding: 12px;
+  border-bottom: 1px solid var(--yt-sys-color-baseline--tonal-background, var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2)));
+}
+
+.lull-shortcuts a {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
+  font: 400 14px/20px Roboto, Arial, sans-serif;
+  text-decoration: none;
+}
+
+.lull-shortcuts a:hover {
+  background: var(--yt-sys-color-baseline--tonal-background, var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15)));
+}
+
+.lull-shortcuts a[aria-current="page"] {
+  background: var(--yt-sys-color-baseline--tonal-background, var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15)));
+  font-weight: 500;
+}
+
+.lull-shortcuts svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.lull-shortcuts-title {
+  font: 500 16px/22px Roboto, Arial, sans-serif;
+  color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
+  padding: 6px 12px 4px;
+}
+
+html:not([data-lull-shortcuts]) .lull-shortcuts,
+html:not([data-lull-shortcuts]) .lull-mini-shortcuts {
+  display: none !important;
+}
+
+.lull-mini-shortcuts a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 0 12px;
+  border-radius: 10px;
+  color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
+  font: 400 10px/14px Roboto, Arial, sans-serif;
+  text-decoration: none;
+}
+
+.lull-mini-shortcuts a:hover {
+  background: var(--yt-sys-color-baseline--tonal-background, var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15)));
+}
+
+.lull-mini-shortcuts svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---- Resizable recommendations column ----------------------------------- */
+html[data-lull-resizable-sidebar] ytd-watch-flexy[is-two-columns_] #secondary {
+  position: relative;
+  width: var(--lull-side-w, var(--ytd-watch-flexy-sidebar-width, 402px)) !important;
+  min-width: var(--lull-side-w, var(--ytd-watch-flexy-sidebar-min-width, 300px)) !important;
+}
+
+.lull-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -10px;
+  width: 12px;
+  cursor: col-resize;
+  z-index: 5;
+}
+
+.lull-resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--lull-accent, var(--yt-sys-color-baseline--call-to-action, var(--yt-spec-call-to-action, #3ea6ff)));
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.lull-resizer:hover::after,
+.lull-resizer.lull-dragging::after {
+  opacity: 0.8;
+}
+
+html:not([data-lull-resizable-sidebar]) .lull-resizer,
+ytd-watch-flexy:not([is-two-columns_]) .lull-resizer {
+  display: none;
+}
+
+html.lull-resizing,
+html.lull-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}

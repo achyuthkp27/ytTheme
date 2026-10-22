@@ -1,0 +1,652 @@
+/* YouTube themes, glass layout and watch room. */
+
+/* ---- Theme: remap YouTube's own colour tokens --------------------------- */
+html[data-lull="yt"][data-lull-theme] {
+  --yt-spec-base-background: var(--lull-bg) !important;
+  --yt-spec-raised-background: var(--lull-surface) !important;
+  --yt-spec-menu-background: var(--lull-surface) !important;
+  --yt-spec-general-background-a: var(--lull-bg) !important;
+  --yt-spec-general-background-b: var(--lull-bg) !important;
+  --yt-spec-general-background-c: var(--lull-surface) !important;
+  --yt-spec-brand-background-solid: var(--lull-bg) !important;
+  --yt-spec-brand-background-primary: var(--lull-bg) !important;
+  --yt-spec-brand-background-secondary: var(--lull-surface) !important;
+  --yt-spec-text-primary: var(--lull-text) !important;
+  --yt-spec-text-primary-inverse: var(--lull-bg) !important;
+  --yt-spec-text-secondary: var(--lull-text2) !important;
+  --yt-spec-text-disabled: color-mix(in srgb, var(--lull-text2) 60%, transparent) !important;
+  --yt-spec-icon-active-other: var(--lull-text) !important;
+  --yt-spec-icon-inactive: var(--lull-text2) !important;
+  --yt-spec-wordmark-text: var(--lull-text) !important;
+  --yt-spec-10-percent-layer: color-mix(in srgb, var(--lull-text) 11%, transparent) !important;
+  --yt-spec-badge-chip-background: color-mix(in srgb, var(--lull-text) 8%, transparent) !important;
+  --yt-spec-button-chip-background-hover: color-mix(in srgb, var(--lull-text) 14%, transparent) !important;
+  --yt-spec-touch-response: color-mix(in srgb, var(--lull-text) 14%, transparent) !important;
+  --yt-spec-additive-background: color-mix(in srgb, var(--lull-text) 6%, transparent) !important;
+  --yt-spec-outline: color-mix(in srgb, var(--lull-text) 13%, transparent) !important;
+  --yt-spec-call-to-action: var(--lull-accent) !important;
+  --yt-spec-themed-blue: var(--lull-accent) !important;
+  --yt-spec-suggested-action: color-mix(in srgb, var(--lull-accent) 16%, transparent) !important;
+  /* Newer components read the "sys" tokens (through hashed aliases). */
+  --yt-sys-color-baseline--base-background: var(--lull-bg) !important;
+  --yt-sys-color-baseline--raised-background: var(--lull-surface) !important;
+  --yt-sys-color-baseline--menu-background: var(--lull-surface) !important;
+  --yt-sys-color-baseline--text-primary: var(--lull-text) !important;
+  --yt-sys-color-baseline--text-secondary: var(--lull-text2) !important;
+  --yt-sys-color-baseline--text-disabled: color-mix(in srgb, var(--lull-text2) 60%, transparent) !important;
+  --yt-sys-color-baseline--text-primary-inverse: var(--lull-bg) !important;
+  --yt-sys-color-baseline--inverted-background: var(--lull-text) !important;
+  --yt-sys-color-baseline--solid-background: var(--lull-text) !important;
+  --yt-sys-color-baseline--wordmark-text: var(--lull-text) !important;
+  --yt-sys-color-baseline--touch-response: var(--lull-text) !important;
+  --yt-sys-color-baseline--additive-background: color-mix(in srgb, var(--lull-text) 6%, transparent) !important;
+  --yt-sys-color-baseline--tonal-background: color-mix(in srgb, var(--lull-text) 10%, transparent) !important;
+  --yt-sys-color-baseline--mono-tonal-hover: color-mix(in srgb, var(--lull-text) 15%, transparent) !important;
+  --yt-sys-color-baseline--tonal-hover-light: color-mix(in srgb, var(--lull-text) 15%, transparent) !important;
+  --yt-sys-color-baseline--state-mono-standard-hovered: color-mix(in srgb, var(--lull-text) 6%, transparent) !important;
+  --yt-sys-color-baseline--outline: color-mix(in srgb, var(--lull-text) 13%, transparent) !important;
+  --yt-sys-color-baseline--outline-opaque: color-mix(in srgb, var(--lull-text) 13%, var(--lull-bg)) !important;
+  --yt-sys-color-baseline--call-to-action: var(--lull-accent) !important;
+  --yt-sys-color-baseline--suggested-action: color-mix(in srgb, var(--lull-accent) 16%, transparent) !important;
+  --yt-sys-color-baseline--frost-container-heavy: color-mix(in srgb, var(--lull-bg) 92%, transparent) !important;
+  --yt-sys-color-baseline--frost-container-semi-heavy: color-mix(in srgb, var(--lull-bg) 75%, transparent) !important;
+  --yt-sys-color-baseline--themed-overlay-background: color-mix(in srgb, var(--lull-bg) 70%, transparent) !important;
+  background: var(--lull-bg);
+}
+
+html[data-lull="yt"][data-lull-scheme="dark"] { color-scheme: dark; }
+html[data-lull="yt"][data-lull-scheme="light"] { color-scheme: light; }
+
+/* When the interface and the wallpaper disagree (dark YouTube over a light
+   picture, or light over dark), YouTube's see-through chip and button fills
+   pick up the wallpaper and their text disappears. Make those fills solid
+   enough to carry the interface's own text colour. */
+html[data-lull="yt"][data-lull-glass][data-lull-tone="light"]:is([data-lull-scheme="dark"], [dark]:not([data-lull-scheme])) {
+  --yt-sys-color-baseline--tonal-background: rgba(26, 26, 31, 0.76) !important;
+  --yt-sys-color-baseline--additive-background: rgba(26, 26, 31, 0.6) !important;
+  --yt-sys-color-baseline--mono-tonal-hover: rgba(48, 48, 56, 0.88) !important;
+  --yt-sys-color-baseline--tonal-hover-light: rgba(48, 48, 56, 0.88) !important;
+  --yt-spec-badge-chip-background: rgba(26, 26, 31, 0.76) !important;
+  --yt-spec-button-chip-background-hover: rgba(48, 48, 56, 0.88) !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-tone="dark"]:is([data-lull-scheme="light"], :not([dark]):not([data-lull-scheme])) {
+  --yt-sys-color-baseline--tonal-background: rgba(255, 255, 255, 0.82) !important;
+  --yt-sys-color-baseline--additive-background: rgba(255, 255, 255, 0.62) !important;
+  --yt-sys-color-baseline--mono-tonal-hover: rgba(255, 255, 255, 0.94) !important;
+  --yt-sys-color-baseline--tonal-hover-light: rgba(255, 255, 255, 0.94) !important;
+  --yt-spec-badge-chip-background: rgba(255, 255, 255, 0.82) !important;
+  --yt-spec-button-chip-background-hover: rgba(255, 255, 255, 0.94) !important;
+}
+
+/* The search button hard-codes its light/dark fills. */
+html[data-lull="yt"][data-lull-theme] .ytSearchboxComponentSearchButton {
+  background: color-mix(in srgb, var(--lull-text) 8%, transparent) !important;
+  border-color: color-mix(in srgb, var(--lull-text) 13%, transparent) !important;
+}
+
+html[data-lull="yt"][data-lull-theme] .ytSearchboxComponentInputBox {
+  border-color: color-mix(in srgb, var(--lull-text) 13%, transparent) !important;
+}
+
+/* Accent on progress bars. */
+html[data-lull="yt"][data-lull-theme] :is(.ytp-play-progress, .ytp-swatch-background-color, ytd-thumbnail-overlay-resume-playback-renderer #progress, [class*="WatchedProgressBarSegment"]) {
+  background: var(--lull-accent) !important;
+}
+
+html[data-lull="yt"][data-lull-theme] .ytp-scrubber-button {
+  background: var(--lull-accent) !important;
+}
+
+/* ---- Glass layout ------------------------------------------------------- */
+html[data-lull="yt"][data-lull-glass] {
+  --lull-surface-eff: var(--lull-surface, #ffffff);
+  --lull-glass: color-mix(in srgb, var(--lull-surface-eff) var(--lull-card-alpha), transparent);
+  --lull-glass-strong: color-mix(in srgb, var(--lull-surface-eff) min(96%, calc(var(--lull-card-alpha) + 22%)), transparent);
+  --lull-frost: blur(var(--lull-blur)) saturate(1.4);
+  --lull-top: 12px;
+  --yt-spec-base-background: transparent !important;
+  --yt-spec-general-background-a: transparent !important;
+  --yt-spec-brand-background-solid: transparent !important;
+  --yt-spec-brand-background-primary: transparent !important;
+  --yt-sys-color-baseline--base-background: transparent !important;
+  background: var(--lull-bg, #ffffff);
+}
+
+html[data-lull="yt"][data-lull-glass][dark] {
+  --lull-surface-eff: var(--lull-surface, #1f1f1f);
+  background: var(--lull-bg, #0f0f0f);
+}
+
+html[data-lull="yt"][data-lull-glass] :is(body, ytd-app, #frosted-glass) {
+  background: transparent !important;
+}
+
+html[data-lull="yt"][data-lull-glass] #frosted-glass {
+  display: none !important;
+}
+
+/* Floating top bar: a dark smoked-glass pill on every wallpaper. Its
+   contents always use YouTube's dark colours (sidebar.js marks the bar [dark]),
+   so icons and text stay readable over light pictures too. */
+html[data-lull="yt"][data-lull-glass] #masthead-container.ytd-app {
+  top: var(--lull-top) !important;
+  left: 16px !important;
+  right: 16px !important;
+  width: auto !important;
+  border-radius: 999px;
+  background: rgba(14, 15, 20, 0.56) !important;
+  backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-masthead #container {
+  padding: 0 10px 0 18px !important;
+}
+
+/* Search: one soft pill, the button folded into it. */
+html[data-lull="yt"][data-lull-glass] ytd-masthead .ytSearchboxComponentInputBox {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-right: 0 !important;
+  border-radius: 999px 0 0 999px !important;
+  box-shadow: none !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-masthead .ytSearchboxComponentSearchButton {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-left: 0 !important;
+  border-radius: 0 999px 999px 0 !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-masthead .ytSearchboxComponentInputBox:focus-within {
+  border-color: color-mix(in srgb, var(--lull-accent, #8ab4ff) 70%, transparent) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-masthead :is(#voice-search-button button, #buttons button.ytSpecButtonShapeNextTonal) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 999px !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-masthead :is(#voice-search-button button, #buttons button):hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-masthead,
+html[data-lull="yt"][data-lull-glass] ytd-masthead #background {
+  background: transparent !important;
+  border-radius: inherit;
+}
+
+html[data-lull="yt"][data-lull-glass] #page-manager.ytd-app {
+  margin-top: calc(var(--ytd-masthead-height, 56px) + var(--lull-top) + 10px) !important;
+}
+
+/* Sidebar (full guide and mini guide) as floating panels. */
+html[data-lull="yt"][data-lull-glass] tp-yt-app-drawer#guide #contentContainer {
+  background: transparent !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-app[guide-persistent-and-visible] tp-yt-app-drawer#guide {
+  top: calc(var(--ytd-masthead-height, 56px) + var(--lull-top) + 10px) !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-app[guide-persistent-and-visible] tp-yt-app-drawer#guide #guide-content {
+  margin: 0 0 12px 12px;
+  height: calc(100% - var(--ytd-masthead-height, 56px) - var(--lull-top) - 22px) !important;
+  border-radius: calc(var(--lull-radius) + 4px);
+  background: var(--lull-glass) !important;
+  backdrop-filter: var(--lull-frost);
+  border: 1px solid var(--lull-glass-line);
+  overflow: hidden;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-app[guide-persistent-and-visible] tp-yt-app-drawer#guide #guide-content #header {
+  display: none !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-app:not([guide-persistent-and-visible]) tp-yt-app-drawer#guide #guide-content {
+  background: var(--lull-glass-strong) !important;
+  backdrop-filter: var(--lull-frost);
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-mini-guide-renderer {
+  top: calc(var(--ytd-masthead-height, 56px) + var(--lull-top) + 10px) !important;
+  left: 12px !important;
+  height: auto !important;
+  max-height: calc(100vh - var(--ytd-masthead-height, 56px) - 40px);
+  padding: 4px;
+  border-radius: calc(var(--lull-radius) + 4px);
+  background: var(--lull-glass) !important;
+  backdrop-filter: var(--lull-frost);
+  border: 1px solid var(--lull-glass-line);
+}
+
+/* Sticky chip bars. */
+html[data-lull="yt"][data-lull-glass] :is(ytd-feed-filter-chip-bar-renderer #chips-wrapper, ytd-search-header-renderer, #chip-bar ytd-feed-filter-chip-bar-renderer) {
+  background: var(--lull-glass-strong) !important;
+  backdrop-filter: var(--lull-frost);
+  border-radius: calc(var(--lull-radius) + 2px);
+  border: 1px solid var(--lull-glass-line);
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-feed-filter-chip-bar-renderer #chips-wrapper {
+  padding: 0 8px;
+}
+
+html[data-lull="yt"][data-lull-glass] :is(ytd-feed-filter-chip-bar-renderer, ytd-feed-filter-chip-bar-renderer #chips-wrapper) {
+  width: auto !important;
+  max-width: 100% !important;
+  left: auto !important;
+  right: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-rich-grid-renderer > #header {
+  margin: 0 9px 18px !important;
+  max-width: calc(100% - 18px);
+}
+
+/* Cards. Only the bars above (top bar, sidebar, chips) blur what's behind
+   them: blurring behind every card re-renders dozens of blurs on each scroll
+   frame, which is what makes glass themes feel heavy. Cards use a translucent
+   fill instead. */
+html[data-lull="yt"][data-lull-glass] :is(
+  ytd-rich-item-renderer > #content,
+  ytd-video-renderer,
+  ytd-grid-video-renderer,
+  ytd-channel-renderer,
+  ytd-playlist-renderer,
+  ytd-radio-renderer,
+  ytd-playlist-video-renderer,
+  #related yt-lockup-view-model,
+  #related ytd-compact-video-renderer,
+  yt-lockup-view-model:not(ytd-rich-item-renderer yt-lockup-view-model, #related yt-lockup-view-model)
+) {
+  background: var(--lull-glass) !important;
+  border: 1px solid var(--lull-glass-line);
+  border-radius: var(--lull-radius);
+  box-shadow: var(--lull-glass-shadow);
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+/* Feed cards keep YouTube's own layout (thumbnail, text below) on a soft
+   backing that only exists so the text reads over the wallpaper. */
+html[data-lull="yt"][data-lull-glass] ytd-rich-item-renderer > #content {
+  height: calc(100% - 8px);
+  padding: 6px 6px 10px;
+  border: 0;
+  box-shadow: none;
+  border-radius: calc(var(--lull-radius) + 4px);
+  background: color-mix(in srgb, var(--lull-surface-eff) calc(var(--lull-card-alpha) * 0.9), transparent) !important;
+}
+
+html[data-lull="yt"][data-lull-glass] #related :is(yt-lockup-view-model, ytd-compact-video-renderer) {
+  display: block;
+  margin-bottom: 8px;
+  padding: 6px;
+}
+
+html[data-lull="yt"][data-lull-glass] :is(ytd-video-renderer, ytd-channel-renderer, ytd-playlist-renderer, ytd-radio-renderer) {
+  margin-top: 12px !important;
+}
+
+/* Shelves sit on a soft panel. */
+html[data-lull="yt"][data-lull-glass] :is(ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-shelf-renderer, grid-shelf-view-model, ytd-horizontal-card-list-renderer) {
+  background: color-mix(in srgb, var(--lull-surface-eff) calc(var(--lull-card-alpha) * 0.6), transparent);
+  border: 1px solid var(--lull-glass-line);
+  border-radius: calc(var(--lull-radius) + 4px);
+  padding: 12px 16px;
+  box-sizing: border-box;
+}
+
+/* Watch page. */
+html[data-lull="yt"][data-lull-glass] ytd-watch-flexy :is(ytd-watch-metadata, ytd-comments#comments) {
+  display: block;
+  background: var(--lull-glass);
+  border: 1px solid var(--lull-glass-line);
+  border-radius: calc(var(--lull-radius) + 2px);
+  box-shadow: var(--lull-glass-shadow);
+  padding: 4px 16px 16px;
+  margin-top: 14px;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-watch-flexy #ytd-player {
+  border-radius: calc(var(--lull-radius) + 2px) !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-watch-flexy ytd-playlist-panel-renderer #container {
+  background: var(--lull-glass) !important;
+}
+
+/* ---- Overlay cards: the thumbnail is the card; title and stats sit on a
+   strip across its bottom, the channel avatar in its top-left corner. ---- */
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] ytd-rich-item-renderer > #content {
+  background: none !important;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  height: auto;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupViewModelHost {
+  position: relative;
+  display: block !important;
+  border-radius: var(--lull-radius);
+  overflow: hidden;
+  box-shadow: var(--lull-glass-shadow);
+  border: 1px solid var(--lull-glass-line);
+  isolation: isolate;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] #related yt-lockup-view-model {
+  background: none !important;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupViewModelContentImage {
+  display: block;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupViewModelHost :is(yt-thumbnail-view-model, .ytThumbnailViewModelImage, img) {
+  border-radius: 0 !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) :is(.ytLockupViewModelMetadata, yt-lockup-metadata-view-model) {
+  display: contents !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupMetadataViewModelAvatar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  margin: 0 !important;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupMetadataViewModelTextContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 9px 40px 8px 12px;
+  background: color-mix(in srgb, var(--lull-surface-eff) 86%, transparent);
+  border-top: 1px solid var(--lull-glass-line);
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) :is(.ytLockupMetadataViewModelTitle, .ytLockupMetadataViewModelTitle .ytAttributedStringHost) {
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px !important;
+  line-height: 19px !important;
+  max-height: none !important;
+  -webkit-line-clamp: unset !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupMetadataViewModelHeadingReset {
+  margin: 0 !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) yt-content-metadata-view-model {
+  font-size: 12px !important;
+  line-height: 16px !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) yt-content-metadata-view-model [class*="MetadataRow"] {
+  display: inline !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) yt-content-metadata-view-model [class*="MetadataRow"] + [class*="MetadataRow"]::before {
+  content: " · ";
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupViewModelHost [class*="MenuButton"] {
+  position: absolute !important;
+  right: 4px;
+  bottom: 6px;
+  z-index: 3;
+}
+
+/* ⋮ and the quick "Not interested" sit in the strip, bottom right. */
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupViewModelHost [class*="MenuButton"] {
+  top: auto !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .lull-ni {
+  top: auto;
+  bottom: 9px;
+  right: 42px;
+  width: 28px;
+  height: 28px;
+}
+
+html[data-lull-quick-not-interested][data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupMetadataViewModelTextContainer {
+  padding-right: 76px;
+}
+
+/* Keep stats on one line so every strip is the same slim height. */
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) yt-content-metadata-view-model {
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) yt-content-metadata-view-model [class*="MetadataRow"] {
+  white-space: nowrap !important;
+}
+
+/* During a hover preview, trim the preview's bottom edge so the strip below
+   stays visible and clickable (menu.js measures the strip). */
+html.lull-clip-preview[data-lull-overlay] ytd-video-preview {
+  clip-path: inset(0 0 var(--lull-strip, 0px) 0);
+}
+
+/* Duration and progress move to the top so the strip doesn't cover them. */
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) yt-thumbnail-bottom-overlay-view-model {
+  top: 0;
+  bottom: auto !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) yt-thumbnail-bottom-overlay-view-model [class*="BadgeContainer"] {
+  top: 8px;
+  bottom: auto !important;
+}
+
+/* ---- Videos per row ----------------------------------------------------- */
+html[data-lull="yt"][data-lull-glass][data-lull-per-row] ytd-rich-grid-renderer {
+  --ytd-rich-grid-items-per-row: var(--lull-per-row) !important;
+  --ytd-rich-grid-item-margin: 18px !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-per-row] ytd-rich-grid-renderer ytd-rich-item-renderer[rendered-from-rich-grid] {
+  width: calc(100% / var(--lull-per-row) - 18px - 0.01px) !important;
+  margin: 0 9px 22px !important;
+}
+
+/* ---- Floating icon rail (instead of the full sidebar) ------------------- */
+html[data-lull="yt"][data-lull-glass][data-lull-rail]:not([data-lull-page="watch"]) ytd-app[guide-persistent-and-visible] tp-yt-app-drawer#guide,
+html[data-lull="yt"][data-lull-glass][data-lull-rail]:not([data-lull-page="watch"]) #masthead #guide-button {
+  display: none !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-rail]:not([data-lull-page="watch"]) ytd-mini-guide-renderer {
+  display: none !important;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-rail]:not([data-lull-page="watch"]) ytd-page-manager#page-manager {
+  margin-left: 84px !important;
+}
+
+nav.lull-rail {
+  position: fixed;
+  top: 50%;
+  left: 14px;
+  z-index: 2010;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 20px;
+  background: var(--lull-glass-strong);
+  backdrop-filter: var(--lull-frost);
+  border: 1px solid var(--lull-glass-line);
+  box-shadow: var(--lull-glass-shadow);
+}
+
+html:not([data-lull-rail]) nav.lull-rail,
+html[data-lull-page="watch"] nav.lull-rail {
+  display: none;
+}
+
+nav.lull-rail a {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  color: var(--lull-text, var(--yt-sys-color-baseline--text-primary, #0f0f0f));
+  transition: background 0.15s;
+}
+
+nav.lull-rail a:hover,
+nav.lull-rail a[aria-current="page"] {
+  background: color-mix(in srgb, currentColor 13%, transparent);
+}
+
+nav.lull-rail svg {
+  width: 22px;
+  height: 22px;
+}
+
+.lull-rail-sep {
+  width: 24px;
+  height: 1px;
+  margin: 4px 0;
+  background: var(--lull-glass-line);
+}
+
+/* The channel header pins itself under a 56px top bar; the floating bar
+   ends lower (its top margin plus a gap), so pin it that much lower. */
+html[data-lull="yt"][data-lull-glass] ytd-browse tp-yt-app-header#header[fixed] {
+  top: calc(var(--lull-top) + 6px) !important;
+}
+
+/* Channel tabs: a frosted strip (it sticks to the top while scrolling). */
+html[data-lull="yt"][data-lull-glass] ytd-browse #tabs-container {
+  background: var(--lull-glass-strong) !important;
+  backdrop-filter: var(--lull-frost);
+  border-radius: calc(var(--lull-radius) + 2px);
+  border: 1px solid var(--lull-glass-line);
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-browse #tabs-inner-container {
+  background: transparent !important;
+}
+
+/* Headers and section titles sit straight on the wallpaper: use the colours
+   measured for it (tone attributes from core.js). Buttons keep their own. */
+html[data-lull="yt"][data-lull-glass][data-lull-tone] :is(
+  ytd-browse #page-header-container,
+  ytd-browse yt-page-header-renderer,
+  ytd-browse ytd-item-section-header-renderer,
+  yt-section-header-view-model,
+  ytd-rich-shelf-renderer #title-container,
+  ytd-shelf-renderer #title-container,
+  ytd-reel-shelf-renderer #title-container
+) :is(h1, h2, h3, #title, yt-dynamic-text-view-model, yt-formatted-string, .yt-core-attributed-string, span, a):not(button, button *, yt-button-shape, yt-button-shape *, button-view-model, button-view-model *, [class*="ButtonShape"], [class*="ButtonShape"] *, [role="button"], [role="button"] *) {
+  color: var(--lull-on-bg) !important;
+  text-shadow: var(--lull-on-bg-shadow);
+}
+
+/* A channel header has several lines of small text; a soft frosted backing
+   keeps it readable even where it crosses busy parts of a photo. */
+html[data-lull="yt"][data-lull-glass][data-lull-tone] ytd-browse #page-header yt-page-header-view-model {
+  background: var(--lull-on-bg-panel);
+  backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid var(--lull-glass-line);
+  border-radius: calc(var(--lull-radius) + 6px);
+  padding: 14px 18px 18px;
+  box-sizing: border-box;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-tone] ytd-browse #page-header-container :is(yt-content-metadata-view-model, yt-description-preview-view-model) :is(span, a) {
+  color: var(--lull-on-bg2) !important;
+}
+
+/* Channel and other page headers sit on the wallpaper too. */
+html[data-lull="yt"][data-lull-glass] ytd-browse :is(#page-header-container, #page-header, ytd-tabbed-page-header, tp-yt-app-header, tp-yt-app-header #background) {
+  background: transparent !important;
+}
+
+/* Gentle motion: cards ease in as they appear. */
+html[data-lull="yt"][data-lull-motion] :is(ytd-rich-item-renderer, ytd-video-renderer, #related yt-lockup-view-model) {
+  animation: lull-in 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+html[data-lull="yt"][data-lull-motion] :is(ytd-rich-item-renderer, ytd-video-renderer) {
+  transition: transform 0.25s ease;
+}
+
+html[data-lull="yt"][data-lull-motion] :is(ytd-rich-item-renderer, ytd-video-renderer):hover {
+  transform: translateY(-2px);
+}
+
+/* ---- Watch room --------------------------------------------------------- */
+html[data-lull="yt"][data-lull-watch-room][data-lull-page="watch"] #ytd-player {
+  box-shadow: 0 0 120px 18px var(--lull-glow, transparent), 0 0 34px 0 var(--lull-glow, transparent) !important;
+  transition: box-shadow 1.4s ease;
+}
+
+/* Everything around the player fades back while the video plays (fading the
+   surroundings, rather than laying a scrim over the page, keeps the player
+   clear of YouTube's stacking contexts). Hover brings a part back. */
+html[data-lull="yt"][data-lull-watch-room][data-lull-page="watch"] :is(#masthead-container, ytd-watch-flexy #secondary, ytd-watch-flexy #below, tp-yt-app-drawer#guide, ytd-mini-guide-renderer) {
+  transition: opacity 1.2s ease;
+}
+
+html[data-lull="yt"][data-lull-watch-room].lull-room-playing[data-lull-page="watch"] :is(#masthead-container, ytd-watch-flexy #secondary, ytd-watch-flexy #below, tp-yt-app-drawer#guide, ytd-mini-guide-renderer) {
+  opacity: 0.18;
+}
+
+html[data-lull="yt"][data-lull-watch-room].lull-room-playing[data-lull-page="watch"] :is(#masthead-container, ytd-watch-flexy #secondary, ytd-watch-flexy #below, tp-yt-app-drawer#guide, ytd-mini-guide-renderer):hover {
+  opacity: 1;
+}
+
+html[data-lull="yt"][data-lull-watch-room][data-lull-page="watch"],
+html[data-lull="yt"][data-lull-watch-room][data-lull-page="watch"] :is(body, ytd-app) {
+  transition: background-color 1.2s ease;
+}
+
+html[data-lull="yt"][data-lull-watch-room].lull-room-playing[data-lull-page="watch"]:not([data-lull-glass]),
+html[data-lull="yt"][data-lull-watch-room].lull-room-playing[data-lull-page="watch"]:not([data-lull-glass]) :is(body, ytd-app) {
+  background-color: #060608 !important;
+}
+
+html[data-lull="yt"][data-lull-watch-room][data-lull-glass][data-lull-page="watch"]::before {
+  transition: filter 1.2s ease;
+}
+
+html[data-lull="yt"][data-lull-watch-room][data-lull-glass].lull-room-playing[data-lull-page="watch"]::before {
+  filter: brightness(0.3) saturate(0.85);
+}

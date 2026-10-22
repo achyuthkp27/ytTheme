@@ -1,0 +1,93 @@
+/* Shared design layer: background picture, fonts, motion. */
+
+/* The background sits on a fixed layer behind the page; YouTube makes its own
+   page backgrounds transparent in glass mode (see youtube/design.css). */
+html[data-lull-glass][data-lull-bg]::before {
+  content: "";
+  position: fixed;
+  inset: -4vmax;
+  z-index: -1;
+  background: var(--lull-bg-layer);
+  pointer-events: none;
+}
+
+/* Your picture: zoomed around the point you chose. Without motion the layer
+   matches the window exactly, so the crop editor's preview is what you get. */
+html[data-lull-glass][data-lull-bg="custom"]::before {
+  scale: var(--lull-bg-zoom, 1);
+  transform-origin: var(--lull-bg-pos, 50% 50%);
+}
+
+html[data-lull-glass][data-lull-bg="custom"]:not([data-lull-motion])::before {
+  inset: 0;
+}
+
+html[data-lull-glass][data-lull-bg-scheme="dark"] {
+  --lull-glass-line: rgba(255, 255, 255, 0.09);
+  --lull-glass-shadow: 0 10px 34px rgba(0, 0, 0, 0.28);
+}
+
+html[data-lull-glass][data-lull-bg-scheme="light"],
+html[data-lull-glass]:not([data-lull-bg]) {
+  --lull-glass-line: rgba(0, 0, 0, 0.07);
+  --lull-glass-shadow: 0 10px 34px rgba(30, 30, 60, 0.1);
+}
+
+/* Text that sits straight on the wallpaper. core.js measures the wallpaper
+   (for your own picture: the part on screen) and sets the tone attributes. */
+html[data-lull-glass][data-lull-tone="dark"] {
+  --lull-on-bg: #ffffff;
+  --lull-on-bg2: rgba(255, 255, 255, 0.82);
+  --lull-on-bg-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 0 22px rgba(0, 0, 0, 0.45);
+  --lull-on-bg-panel: rgba(12, 12, 16, 0.42);
+}
+
+html[data-lull-glass][data-lull-tone="light"] {
+  --lull-on-bg: #111216;
+  --lull-on-bg2: rgba(17, 18, 22, 0.74);
+  --lull-on-bg-shadow: 0 1px 1px rgba(255, 255, 255, 0.6), 0 0 22px rgba(255, 255, 255, 0.65);
+  --lull-on-bg-panel: rgba(255, 255, 255, 0.5);
+}
+
+html[data-lull-glass][data-lull-hero-tone="dark"] {
+  --lull-hero-fg: #ffffff;
+  --lull-hero-fg2: rgba(255, 255, 255, 0.86);
+  --lull-hero-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 42px rgba(0, 0, 0, 0.45);
+  --lull-hero-scrim: rgba(0, 0, 0, 0.34);
+  --lull-hero-accent: #ffd27d;
+}
+
+html[data-lull-glass][data-lull-hero-tone="light"] {
+  --lull-hero-fg: #101115;
+  --lull-hero-fg2: rgba(16, 17, 21, 0.78);
+  --lull-hero-shadow: 0 1px 2px rgba(255, 255, 255, 0.7), 0 0 40px rgba(255, 255, 255, 0.75);
+  --lull-hero-scrim: rgba(255, 255, 255, 0.5);
+  --lull-hero-accent: #8a4b00;
+}
+
+@keyframes lull-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-1.5vmax, 1vmax, 0) scale(1.04); }
+  100% { transform: translate3d(1.2vmax, -1.2vmax, 0) scale(1.02); }
+}
+
+@keyframes lull-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+html[data-lull-motion][data-lull-glass][data-lull-bg]::before {
+  animation: lull-drift 48s ease-in-out infinite alternate;
+}
+
+/* Fonts: override the site's text faces but leave icons and captions alone. */
+html[data-lull-font] :is(body, body *):not(svg, svg *, .ytp-caption-segment, .caption-window *, lull-layer) {
+  font-family: var(--lull-font) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-lull-motion] *,
+  html[data-lull-motion]::before {
+    animation: none !important;
+  }
+}
