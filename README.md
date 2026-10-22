@@ -5,7 +5,7 @@ restyle it: a glass layout over your own wallpaper, a greeting, themes, and
 tools to find what's worth watching. It runs only on `youtube.com`. Nothing is
 paywalled.
 
-![ytTheme on the YouTube home page: a floating top bar and icon rail over the Ember Ridge wallpaper, a greeting, and the topic and sort bar](docs/screenshot.png)
+![ytTheme on the YouTube home page: a floating top bar and icon rail over a black-and-white photo, a "Still up, Achu" greeting, and the topic and sort bar](docs/screenshot.png)
 
 ## Features
 
