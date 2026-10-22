@@ -54,6 +54,10 @@
         tog('design.glass', 'Glass layout'),
         t('design.background', 'backgrounds', 'Background'),
         t('design.bgFrame', 'crop', 'Show this part of your picture', { hint: 'Drag the picture or use the arrow keys. Zoom in to fill or crop tighter.', showIf: (s) => s.design.background === 'custom' }),
+        tog('design.autoNight', 'Switch wallpaper in the evening', 'A second wallpaper for the evening hours.'),
+        t('design.nightBackground', 'backgrounds', 'Evening wallpaper', { night: true, showIf: (s) => s.design.autoNight }),
+        t('design.nightFrom', 'range', 'Evening starts at', { min: 15, max: 23, step: 1, unit: ':00', showIf: (s) => s.design.autoNight }),
+        t('design.nightTo', 'range', 'Morning starts at', { min: 3, max: 11, step: 1, unit: ':00', showIf: (s) => s.design.autoNight }),
         tog('design.rail', 'Floating icon rail', 'A small bar of icons instead of the full sidebar.'),
         tog('design.overlayCards', 'Overlay cards', 'Titles sit on a strip across the thumbnail instead of below it.'),
         t('design.perRow', 'range', 'Videos per row', { min: 0, max: 6, step: 1, zero: 'Auto' }),
@@ -95,6 +99,8 @@
       controls: [
         tog('yt.menuActions', 'Add “Hide” actions to the ⋮ menu', 'Hide a channel or a word straight from a video’s menu.'),
         tog('yt.quickNotInterested', 'Not interested button on videos', 'One click runs YouTube’s own “Not interested”. Shift-click: “Don’t recommend channel”.'),
+        tog('yt.quickWatchLater', 'Watch later button on videos', 'Saves the video to Watch later in one click.'),
+        tog('yt.cardHotkeys', 'Keyboard shortcuts on videos', 'While pointing at a video: N = Not interested (Shift+N: don’t recommend channel), W = Watch later.'),
         tog('yt.hideWatched', 'Hide watched videos'),
         t('yt.watchedThreshold', 'range', 'Watched means at least', { min: 10, max: 100, step: 5, unit: '%', showIf: (s) => s.yt.hideWatched }),
         t('yt.blockedChannels', 'list', 'Hidden channels', { placeholder: 'Channel name or @handle' }),
@@ -108,9 +114,43 @@
         tog('yt.sorter', 'Sort and filter bar', 'On Home, Subscriptions and a channel’s Videos tab: pick a topic (AI, Tech or your own words), sort by Newest, Most viewed or Taking off, and limit to the last 24 hours or this week.'),
         t('yt.subsSort', 'select', 'Sort by', { options: () => ({ newest: 'Newest', views: 'Most viewed', rising: 'Taking off (views per hour)' }), showIf: (s) => s.yt.sorter }),
         t('yt.subsWindow', 'select', 'Uploaded', { options: () => ({ any: 'Any time', day: 'Last 24 hours', week: 'This week' }), showIf: (s) => s.yt.sorter }),
-        t('yt.subsTopic', 'select', 'Topic', { options: () => ({ all: 'All', ai: 'AI', tech: 'Tech', mine: 'Mine (your words)' }), showIf: (s) => s.yt.sorter }),
-        t('yt.topicWords', 'list', 'Your topic words', { placeholder: 'e.g. robotics, F1, chess', showIf: (s) => s.yt.sorter }),
+        t('yt.subsTopic', 'select', 'Topic', { options: (s) => ({ all: 'All', ai: 'AI', tech: 'Tech', ...Object.fromEntries((s ? s.yt.topics : []).map((x) => ['c:' + x.id, x.name])) }), showIf: (s) => s.yt.sorter }),
+        t('yt.topics', 'topics', 'Your topics', { hint: 'Each topic becomes a chip in the bar. A video matches when its title or channel contains one of the words.', showIf: (s) => s.yt.sorter }),
       ],
+    },
+    {
+      id: 'playback', group: 'YouTube tools', title: 'Playback', icon: 'screen',
+      blurb: 'Applied once when a video starts, so changing speed or quality by hand still sticks.',
+      controls: [
+        t('yt.speed', 'select', 'Default speed', { options: () => ({ 1: 'Normal', 1.1: '1.1×', 1.25: '1.25×', 1.5: '1.5×', 1.75: '1.75×', 2: '2×' }), number: true }),
+        t('yt.quality', 'select', 'Preferred quality', { options: () => ({ auto: 'Auto (YouTube decides)', hd2160: '4K', hd1440: '1440p', hd1080: '1080p', hd720: '720p', large: '480p' }) }),
+        tog('yt.theater', 'Open videos in theater mode'),
+      ],
+    },
+    {
+      id: 'sponsor', group: 'YouTube tools', title: 'Skip segments', icon: 'sparkle',
+      blurb: 'Skips parts other viewers marked on SponsorBlock, a free crowd-sourced database. Only a short hash prefix of the video ID is sent, never the ID itself.',
+      controls: [
+        tog('yt.sponsorSkip', 'Skip marked segments', 'Each skip shows a note with Undo. Segments are marked on the progress bar.'),
+        tog('yt.sbSponsor', 'Sponsors', null),
+        tog('yt.sbSelfpromo', 'Self-promotion', 'Merch, Patreon and the creator’s own products.'),
+        tog('yt.sbInteraction', '“Like and subscribe” reminders'),
+        tog('yt.sbIntro', 'Intros'),
+        tog('yt.sbOutro', 'End cards and credits'),
+        tog('yt.sbMusic', 'Non-music parts of music videos'),
+      ].map((c, i) => (i ? { ...c, showIf: (s) => s.yt.sponsorSkip } : c)),
+    },
+    {
+      id: 'calm', group: 'YouTube tools', title: 'Calmer feed', icon: 'sun',
+      controls: [
+        tog('yt.calmTitles', 'Tone down shouting titles', 'ALL-CAPS titles become sentence case (acronyms like AI or NASA stay), and “!!!” becomes “!”.'),
+        tog('yt.neutralThumbs', 'Neutral thumbnails', 'Shows a frame from the middle of each video instead of its designed thumbnail.'),
+      ],
+    },
+    {
+      id: 'watchtime', group: 'YouTube tools', title: 'Watch time', icon: 'clock',
+      blurb: 'Counts how long videos play, on this computer only. Today’s total is in the toolbar popup.',
+      controls: [t('yt.watchLimit', 'range', 'Gentle note after', { min: 0, max: 300, step: 15, unit: ' min', zero: 'Off' })],
     },
     {
       id: 'sidebar', group: 'YouTube tools', title: 'Sidebar', icon: 'sidebar',
@@ -133,6 +173,11 @@
       ],
     },
   ];
+
+  SECTIONS.push({
+    id: 'sync', group: 'Data', title: 'Sync', icon: 'data',
+    controls: [tog('sync', 'Sync settings with your Chrome account', 'Settings follow you to other computers where you’re signed in to Chrome. Your pictures, watch list and watch time stay on this computer.')],
+  });
 
   const ALL = SECTIONS.flatMap((s) => s.controls);
   const pick = (keys) => keys.map((k) => ALL.find((c) => c.key === k)).filter(Boolean);
@@ -183,6 +228,8 @@
   .l-btn.l-primary{background:var(--l-accent);border-color:transparent;color:var(--l-ink)}
   .l-btn.l-danger{color:var(--l-danger)}
   .l-empty{color:var(--l-text2);font-size:12px}
+  .l-topics{display:grid;gap:10px}
+  .l-topic{display:grid;gap:8px;padding:10px;border:1px solid var(--l-line);border-radius:12px;background:var(--l-bg)}
   .l-crop{position:relative;width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--l-line);background:var(--l-hover);cursor:grab;touch-action:none;user-select:none}
   .l-crop:active{cursor:grabbing}
   .l-crop:focus-visible{outline:2px solid var(--l-accent);outline-offset:2px}
@@ -241,16 +288,21 @@
       img.src = URL.createObjectURL(file);
     });
 
-  const uploadBackground = () =>
+  // Your day picture ('custom') or your evening picture ('customNight').
+  const PICTURE = {
+    custom: { store: 'customBackground', setting: 'design.background' },
+    customNight: { store: 'customBackgroundNight', setting: 'design.nightBackground' },
+  };
+  const uploadBackground = (slot = 'custom') =>
     new Promise((resolve) => {
       const input = el('input', { type: 'file', accept: 'image/*' });
       input.addEventListener('change', async () => {
         const file = input.files && input.files[0];
         if (!file) return resolve(false);
         const url = await imageToDataUrl(file);
-        await chrome.storage.local.set({ customBackground: url });
-        await Lull.save('design.background', 'custom');
-        await Lull.save('design.bgFrame', { x: 50, y: 50, zoom: 1 });
+        await chrome.storage.local.set({ [PICTURE[slot].store]: url });
+        await Lull.save(PICTURE[slot].setting, slot);
+        if (slot === 'custom') await Lull.save('design.bgFrame', { x: 50, y: 50, zoom: 1 });
         resolve(true);
       });
       input.click();
@@ -262,11 +314,13 @@
     const actions = opts.actions || {};
     const rows = [];
     let current = settings;
+    const thumbs = { custom: null, customNight: null };
     let customThumb = null;
     const loadThumb = async () => {
       if (!Lull.alive()) return;
-      const { customBackground } = await chrome.storage.local.get('customBackground');
-      customThumb = customBackground || null;
+      const got = await chrome.storage.local.get(['customBackground', 'customBackgroundNight']);
+      customThumb = thumbs.custom = got.customBackground || null;
+      thumbs.customNight = got.customBackgroundNight || null;
       refresh();
     };
     loadThumb();
@@ -307,10 +361,18 @@
         };
       } else if (c.type === 'select') {
         const sel = el('select', { class: 'l-select', 'aria-label': c.label });
-        for (const [k, label] of Object.entries(c.options())) sel.append(el('option', { value: k }, label));
-        sel.addEventListener('change', () => changed(c.key, sel.value));
+        let built = '';
+        sel.addEventListener('change', () => changed(c.key, c.number ? Number(sel.value) : sel.value));
         row.append(text, sel);
-        sync = (s) => (sel.value = Lull.getPath(s, c.key));
+        sync = (s) => {
+          const options = c.options(s);
+          const sig = JSON.stringify(options);
+          if (sig !== built) {
+            built = sig;
+            sel.replaceChildren(...Object.entries(options).map(([k, label]) => el('option', { value: k }, label)));
+          }
+          sel.value = String(Lull.getPath(s, c.key));
+        };
       } else if (c.type === 'text') {
         row.classList.add('l-stack');
         const input = el('input', { class: 'l-input', type: 'text', placeholder: c.placeholder || '', 'aria-label': c.label, maxlength: 40 });
@@ -354,39 +416,43 @@
           }
         };
       } else if (c.type === 'backgrounds') {
+        // c.night: the evening picker, which also offers a separate evening picture.
         row.classList.add('l-stack');
+        const own = c.night ? 'customNight' : 'custom';
         const grid = el('div', { class: 'l-tiles' });
-        const tiles = Object.entries(Lull.BACKGROUNDS).map(([k, bg]) => {
-          const sw = el('span', { class: 'l-swatch' + (k === 'none' ? ' l-none' : '') });
-          if (bg.css) sw.style.background = bg.css;
-          const b = el('button', { class: 'l-tile', type: 'button', title: bg.label }, sw, el('span', { class: 'l-name' }, bg.label));
-          b.addEventListener('click', async () => {
-            if (k === 'custom' && !customThumb) {
-              if (await uploadBackground()) await loadThumb();
-              return;
-            }
-            changed(c.key, k);
+        const tiles = Object.entries(Lull.BACKGROUNDS)
+          .filter(([, bg]) => c.night || !bg.nightOnly)
+          .map(([k, bg]) => {
+            const sw = el('span', { class: 'l-swatch' + (k === 'none' ? ' l-none' : '') });
+            if (bg.css) sw.style.background = bg.css;
+            const b = el('button', { class: 'l-tile', type: 'button', title: bg.label }, sw, el('span', { class: 'l-name' }, bg.label));
+            b.addEventListener('click', async () => {
+              if (PICTURE[k] && !thumbs[k]) {
+                if (await uploadBackground(k)) await loadThumb();
+                return;
+              }
+              changed(c.key, k);
+            });
+            grid.append(b);
+            return { k, b, sw };
           });
-          grid.append(b);
-          return { k, b, sw };
-        });
-        const upload = el('button', { class: 'l-btn', type: 'button', html: ICONS.upload + '<span>Upload your own</span>' });
+        const upload = el('button', { class: 'l-btn', type: 'button', html: ICONS.upload + `<span>${c.night ? 'Upload an evening picture' : 'Upload your own'}</span>` });
         upload.addEventListener('click', async () => {
-          if (await uploadBackground()) {
-            Lull.setPath(current, c.key, 'custom');
-            Lull.setPath(current, 'design.bgFrame', { x: 50, y: 50, zoom: 1 });
+          if (await uploadBackground(own)) {
+            Lull.setPath(current, c.key, own);
+            if (own === 'custom') Lull.setPath(current, 'design.bgFrame', { x: 50, y: 50, zoom: 1 });
             await loadThumb();
           }
         });
         row.append(text, grid, el('div', {}, upload));
         sync = (s) => {
           for (const { k, b, sw } of tiles) {
-            b.setAttribute('aria-pressed', String(s.design.background === k));
-            if (k === 'custom') {
-              if (customThumb) {
+            b.setAttribute('aria-pressed', String(Lull.getPath(s, c.key) === k));
+            if (PICTURE[k]) {
+              if (thumbs[k]) {
                 sw.className = 'l-swatch';
                 sw.innerHTML = '';
-                sw.style.backgroundImage = `url("${customThumb}")`;
+                sw.style.backgroundImage = `url("${thumbs[k]}")`;
               } else {
                 sw.className = 'l-swatch l-upload';
                 sw.innerHTML = ICONS.plus;
@@ -470,6 +536,70 @@
           if (dragging) return;
           f = { x: 50, y: 50, zoom: 1, ...Lull.getPath(s, c.key) };
           paint();
+        };
+      } else if (c.type === 'topics') {
+        // Named topics, each with its own words. Every change saves the whole list.
+        row.classList.add('l-stack');
+        const list = el('div', { class: 'l-topics' });
+        const addTopic = el('button', { class: 'l-btn', type: 'button', html: ICONS.plus + '<span>Add a topic</span>' });
+        const topics = () => structuredClone(Lull.getPath(current, c.key) || []);
+        const nameSoon = debounce((next) => save(c.key, next), 300);
+        addTopic.addEventListener('click', () => changed(c.key, [...topics(), { id: Math.random().toString(36).slice(2, 8), name: 'New topic', words: [] }]));
+        row.append(text, list, el('div', {}, addTopic));
+        let builtSig = '';
+        sync = (s) => {
+          const all = Lull.getPath(s, c.key) || [];
+          const sig = JSON.stringify(all);
+          if (sig === builtSig) return;
+          builtSig = sig;
+          // Don't rebuild under someone typing a topic name.
+          const active = list.getRootNode().activeElement;
+          if (active && list.contains(active) && active.classList.contains('l-topic-name')) return;
+          list.replaceChildren(
+            ...all.map((tp, i) => {
+              const name = el('input', { class: 'l-input l-topic-name', type: 'text', value: tp.name, maxlength: 24, 'aria-label': 'Topic name' });
+              name.addEventListener('input', () => {
+                const next = topics();
+                next[i].name = name.value.trim() || 'Topic';
+                Lull.setPath(current, c.key, next);
+                builtSig = JSON.stringify(next);
+                nameSoon(next);
+              });
+              name.addEventListener('keydown', (e) => e.stopPropagation());
+              const remove = el('button', { class: 'l-btn l-danger', type: 'button' }, 'Remove');
+              remove.addEventListener('click', () => changed(c.key, topics().filter((_, j) => j !== i)));
+              const chips = el(
+                'div',
+                { class: 'l-chips' },
+                tp.words.length
+                  ? tp.words.map((w) => {
+                      const rm = el('button', { type: 'button', 'aria-label': 'Remove ' + w, html: ICONS.close });
+                      rm.addEventListener('click', () => {
+                        const next = topics();
+                        next[i].words = next[i].words.filter((x) => x !== w);
+                        changed(c.key, next);
+                      });
+                      return el('span', { class: 'l-chip' }, w, rm);
+                    })
+                  : [el('span', { class: 'l-empty' }, 'No words yet.')]
+              );
+              const word = el('input', { class: 'l-input', type: 'text', placeholder: 'Add words, separated by commas', 'aria-label': 'Add words to ' + tp.name });
+              const addWords = () => {
+                const words = word.value.split(',').map((w) => w.trim()).filter(Boolean);
+                if (!words.length) return;
+                const next = topics();
+                for (const w of words) if (!next[i].words.some((x) => x.toLowerCase() === w.toLowerCase())) next[i].words.push(w);
+                changed(c.key, next);
+              };
+              word.addEventListener('keydown', (e) => {
+                e.stopPropagation();
+                if (e.key === 'Enter') addWords();
+              });
+              const add = el('button', { class: 'l-btn', type: 'button' }, 'Add');
+              add.addEventListener('click', addWords);
+              return el('div', { class: 'l-topic' }, el('div', { class: 'l-add' }, name, remove), chips, el('div', { class: 'l-add' }, word, add));
+            })
+          );
         };
       } else if (c.type === 'list') {
         row.classList.add('l-stack');

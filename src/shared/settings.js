@@ -5,10 +5,11 @@
 
   // Bump when a default changes in a way existing installs should pick up
   // (see the migration in background.js).
-  Lull.REVISION = 2;
+  Lull.REVISION = 3;
 
   Lull.DEFAULTS = {
-    rev: 2,
+    rev: 3,
+    sync: true,
     yt: {
       enabled: true,
       hideShorts: true,
@@ -37,8 +38,29 @@
       subsSort: 'newest',
       subsWindow: 'any',
       subsTopic: 'all',
-      topicWords: [],
+      // Your own topics: { id, name, words: [] }. AI and Tech are built in.
+      topics: [],
       historySearch: true,
+      // Playback defaults
+      speed: 1,
+      quality: 'auto',
+      theater: false,
+      // SponsorBlock categories to skip
+      sponsorSkip: true,
+      sbSponsor: true,
+      sbSelfpromo: true,
+      sbInteraction: true,
+      sbIntro: false,
+      sbOutro: false,
+      sbMusic: false,
+      // Calmer feed
+      calmTitles: true,
+      neutralThumbs: false,
+      // Watch time
+      watchLimit: 0,
+      // Card shortcuts
+      quickWatchLater: true,
+      cardHotkeys: true,
       cleanPlayer: false,
       resizableSidebar: true,
       sidebarWidth: 402,
@@ -47,6 +69,11 @@
       glass: false,
       background: 'ridge',
       bgFrame: { x: 50, y: 50, zoom: 1 },
+      // A second wallpaper for the evening.
+      autoNight: false,
+      nightBackground: 'lake',
+      nightFrom: 19,
+      nightTo: 6,
       rail: true,
       overlayCards: false,
       perRow: 0,
@@ -102,6 +129,7 @@
         '#f7f3ee',
     },
     custom: { label: 'Your image', scheme: 'dark' },
+    customNight: { label: 'Night image', scheme: 'dark', nightOnly: true },
   };
 
   Lull.FONTS = {

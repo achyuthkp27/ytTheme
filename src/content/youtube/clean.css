@@ -255,7 +255,7 @@ segmented-like-dislike-button-view-model:has(.lull-likebar) {
   position: relative;
 }
 
-.lull-ni {
+.lull-quick {
   position: absolute;
   top: 0;
   right: 36px;
@@ -274,13 +274,17 @@ segmented-like-dislike-button-view-model:has(.lull-likebar) {
   transition: opacity 0.15s, background 0.15s, color 0.15s;
 }
 
-.lull-ni svg {
+.lull-wl {
+  right: 70px;
+}
+
+.lull-quick svg {
   width: 17px;
   height: 17px;
 }
 
-:is(ytd-rich-item-renderer, yt-lockup-view-model):hover .lull-ni,
-.lull-ni:focus-visible {
+:is(ytd-rich-item-renderer, yt-lockup-view-model):hover .lull-quick,
+.lull-quick:focus-visible {
   opacity: 1;
 }
 
@@ -291,13 +295,46 @@ segmented-like-dislike-button-view-model:has(.lull-likebar) {
   outline: none;
 }
 
-html:not([data-lull-quick-not-interested]) .lull-ni {
+.lull-wl:hover,
+.lull-wl:focus-visible {
+  background: #3b82f6;
+  color: #fff;
+  outline: none;
+}
+
+html:not([data-lull-quick-not-interested]) .lull-ni,
+html:not([data-lull-quick-watch-later]) .lull-wl {
   display: none;
+}
+
+/* When only Watch later is on, it takes Not interested's spot. */
+html:not([data-lull-quick-not-interested]) .lull-wl {
+  right: 36px;
 }
 
 /* Menus opened by the quick button stay out of sight while it works. */
 html.lull-quiet-menu ytd-popup-container tp-yt-iron-dropdown {
   opacity: 0 !important;
+}
+
+/* ---- SponsorBlock segments on the progress bar -------------------------- */
+.lull-sb-markers {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+}
+
+.lull-sb-markers i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  opacity: 0.85;
+}
+
+/* Neutral thumbnails are 4:3 frames with black bars; cropping fills the card. */
+img[data-lull-thumb] {
+  object-fit: cover !important;
 }
 
 /* ---- Sidebar shortcuts -------------------------------------------------- */

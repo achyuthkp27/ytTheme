@@ -13,12 +13,12 @@ html[data-lull-glass][data-lull-bg]::before {
 
 /* Your picture: zoomed around the point you chose. Without motion the layer
    matches the window exactly, so the crop editor's preview is what you get. */
-html[data-lull-glass][data-lull-bg="custom"]::before {
+html[data-lull-glass]:is([data-lull-bg="custom"], [data-lull-bg="customNight"])::before {
   scale: var(--lull-bg-zoom, 1);
   transform-origin: var(--lull-bg-pos, 50% 50%);
 }
 
-html[data-lull-glass][data-lull-bg="custom"]:not([data-lull-motion])::before {
+html[data-lull-glass]:is([data-lull-bg="custom"], [data-lull-bg="customNight"]):not([data-lull-motion])::before {
   inset: 0;
 }
 

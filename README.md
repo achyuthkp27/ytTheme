@@ -16,28 +16,33 @@ paywalled.
 - Hide games (Playables and the Gaming chip), topic chips, and Mixes.
 - Hide the home recommendations, the suggestions beside the player, end screens, and comments.
 - Stop autoplay of the next video.
+- Skip sponsor reads, self-promotion and “like and subscribe” reminders (and optionally intros, end cards and non-music parts), using [SponsorBlock](https://sponsor.ajay.app). Each skip shows Undo, and segments are marked on the progress bar.
+- Tone down clickbait: ALL-CAPS titles become sentence case, and thumbnails can be swapped for a frame from the video.
 - Tidy the sidebar: hide Explore, More from YouTube and the footer.
 - Show the dislike count (from [Return YouTube Dislike](https://returnyoutubedislike.com)) and a classic like/dislike ratio bar.
 
 **Find what's worth watching.** A bar on Home, Subscriptions and channel Videos tabs:
 
-- Topic: All, AI, Tech, or your own words.
+- Topic: All, AI, Tech, or your own named topics (for example “F1” or “Markets”), each with its own words.
 - Sort: Newest, Most viewed, or Taking off (views per hour since upload).
 - Time window: any time, the last 24 hours, or this week.
 
 **Design:**
 
 - **Glass layout.** A floating smoked-glass top bar and a small icon rail replace the full sidebar. Cards keep YouTube's own layout on a soft backing. An overlay-card style is optional.
-- **Wallpapers.** Four illustrated scenes drawn as SVG, two gradients, or your own picture. Drag and zoom your picture to choose which part shows.
+- **Wallpapers.** Four illustrated scenes drawn as SVG, two gradients, or your own picture. Drag and zoom your picture to choose which part shows. Optionally switch to a second wallpaper in the evening.
 - **Readable text on any picture.** ytTheme measures how light your wallpaper is, separately behind the greeting. Text straight on the wallpaper switches to dark or light to match, and see-through chips get solid fills when needed.
 - **Greeting.** Shows your name, with its colour taken from your wallpaper or one you choose.
 - **Themes.** Six palettes or your own colours, plus a choice of fonts.
 - **Mood.** A watch room that dims the page and lets the video's colours glow around the player, gentle motion, and soft synthesised click sounds.
 - **In-page settings.** Press the ✦ button, then click any part of the page to open that part's settings.
 
+**Playback:** a default speed, a preferred quality, and theater mode by default. They're applied once per video, so manual changes still stick.
+
 **YouTube tools:**
 
-- A one-click Not interested button on each video (Shift-click: Don't recommend channel).
+- One-click Not interested (Shift-click: Don't recommend channel) and Watch later buttons on each video. While pointing at a video, N and W do the same.
+- Watch time: today's and this week's totals in the toolbar popup, and an optional gentle note after a daily limit.
 - Hide a channel or a word from any video's ⋮ menu, and hide videos you've watched.
 - Sidebar shortcuts to History, Playlists, Watch later and Liked.
 - A search box on the History page, backed by a private list of the videos you open. The list stays in this browser.
@@ -56,21 +61,28 @@ during the reload keep the old version until refreshed.
 
 ## Privacy
 
-Settings, hidden lists, your background picture and the History search list are
-kept in `chrome.storage.local`. The only network request ytTheme makes is for
-dislike counts, sent to `returnyoutubedislikeapi.com` with the video ID, and
-only while that switch is on.
+Your pictures, the History search list and your watch time are kept in
+`chrome.storage.local`, on this computer only.
+
+Settings sync through your Chrome account's `chrome.storage.sync` while the Sync
+switch is on.
+
+ytTheme makes two kinds of network request, each only while its switch is on:
+
+- Dislike counts from `returnyoutubedislikeapi.com`, which receives the video ID.
+- Skip segments from `sponsor.ajay.app` (SponsorBlock), which receives only the first 4 characters of a SHA-256 hash of the video ID. It returns segments for every video that shares that prefix, so it can't tell which video you're watching.
 
 ## Layout
 
 ```
 manifest.json
-src/background.js            service worker: first run, settings migrations, dislike counts
+src/background.js            service worker: migrations, dislike counts, SponsorBlock, settings sync
 src/shared/wallpapers.js     the illustrated wallpapers (SVG)
 src/shared/settings.js       defaults, themes, backgrounds, storage helpers
 src/shared/ui.js             settings controls shared by popup, options, in-page panels
 src/content/shared/          runtime (core.js), sounds + watch room, in-page panels, design layer
-src/content/youtube/         cleanup, filters, sort bar, ⋮ menu, dislikes, sidebar, history, player, greeting, tokens
+src/content/youtube/         cleanup, filters, sort bar, ⋮ menu, dislikes, SponsorBlock, playback, watch time, sidebar, history, greeting, tokens
+src/content/youtube/page.js  runs inside YouTube's page to set speed and quality through the player's own API
 src/popup/  src/options/     toolbar popup and full settings page
 ```
 

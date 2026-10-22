@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ytTheme — calm YouTube",
   "short_name": "ytTheme",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Hide Shorts, ads and noise on YouTube. Glass layout over your own wallpaper, a greeting, themes, and a sort and topic bar.",
   "icons": {
     "16": "icons/icon16.png",
@@ -28,7 +28,8 @@
   ],
   "host_permissions": [
     "*://www.youtube.com/*",
-    "https://returnyoutubedislikeapi.com/*"
+    "https://returnyoutubedislikeapi.com/*",
+    "https://sponsor.ajay.app/*"
   ],
   "content_scripts": [
     {
@@ -55,13 +56,30 @@
         "src/content/youtube/tokens.js",
         "src/content/youtube/clean.js",
         "src/content/youtube/filters.js",
+        "src/content/youtube/calm.js",
         "src/content/youtube/sorter.js",
         "src/content/youtube/menu.js",
         "src/content/youtube/dislikes.js",
         "src/content/youtube/sidebar.js",
         "src/content/youtube/history.js",
         "src/content/youtube/player.js",
+        "src/content/youtube/sponsor.js",
+        "src/content/youtube/watchtime.js",
         "src/content/youtube/greeting.js"
+      ]
+    },
+    {
+      "matches": [
+        "*://www.youtube.com/*"
+      ],
+      "exclude_matches": [
+        "*://www.youtube.com/embed/*",
+        "*://www.youtube.com/live_chat*"
+      ],
+      "run_at": "document_idle",
+      "world": "MAIN",
+      "js": [
+        "src/content/youtube/page.js"
       ]
     }
   ]

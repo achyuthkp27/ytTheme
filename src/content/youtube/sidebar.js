@@ -104,4 +104,21 @@
   }
 
   Lull.onMutate(ensure);
+
+  // A channel header that has scrolled up is pinned with only its tab bar in
+  // view; mark it so the rest of it can't peek out above the floating top bar.
+  let ticking = false;
+  addEventListener(
+    'scroll',
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const header = document.querySelector('ytd-page-manager > ytd-browse:not([hidden]) tp-yt-app-header#header[fixed]');
+        if (header) header.toggleAttribute('data-lull-stuck', header.getBoundingClientRect().top < -2);
+      });
+    },
+    { passive: true }
+  );
 })();

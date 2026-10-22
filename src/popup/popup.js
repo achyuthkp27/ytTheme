@@ -45,4 +45,23 @@
   });
 
   show(tab);
+
+  // Watch time: today and the last 7 days (counted on this computer).
+  const fmt = (s) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.round((s % 3600) / 60);
+    return h ? `${h} h ${m} min` : `${m} min`;
+  };
+  const { watchTime = {} } = await chrome.storage.local.get('watchTime');
+  const day = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const now = new Date();
+  let week = 0;
+  for (let i = 0; i < 7; i++) week += watchTime[day(new Date(now.getFullYear(), now.getMonth(), now.getDate() - i))] || 0;
+  const todayS = watchTime[day(now)] || 0;
+  if (week) {
+    const box = document.getElementById('watch');
+    box.hidden = false;
+    box.title = 'Video time counted on this computer';
+    box.append(ui.el('b', {}, fmt(todayS) + ' today'), fmt(week) + ' this week');
+  }
 })();

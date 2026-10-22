@@ -140,14 +140,14 @@
 
   // ---- regions -------------------------------------------------------------
   const YT = () => [
-    { id: 'player', sel: '#movie_player, ytd-player', title: 'Player', icon: 'screen', keys: ['yt.cleanPlayer', 'design.watchRoom', 'yt.dislikes', 'yt.likeBar', 'yt.hideEndScreens', 'yt.skipVideoAds'] },
+    { id: 'player', sel: '#movie_player, ytd-player', title: 'Player', icon: 'screen', keys: ['yt.speed', 'yt.quality', 'yt.theater', 'yt.sponsorSkip', 'yt.cleanPlayer', 'design.watchRoom', 'yt.dislikes', 'yt.likeBar', 'yt.hideEndScreens', 'yt.skipVideoAds'] },
     { id: 'topbar', sel: '#masthead-container, ytd-masthead', title: 'Top bar & theme', icon: 'palette', keys: ['design.theme', 'design.custom.bg', 'design.custom.surface', 'design.custom.text', 'design.custom.accent', 'design.font', 'design.greeting', 'design.name', 'design.nameColor', 'design.nameCustom'] },
     { id: 'sidebar', sel: 'tp-yt-app-drawer, ytd-mini-guide-renderer, #guide', title: 'Sidebar', icon: 'sidebar', keys: ['design.rail', 'yt.shortcuts', 'yt.tidySidebar', 'yt.hideShorts', 'design.blur'] },
-    { id: 'card', sel: Lull.yt ? Lull.yt.CARDS : 'ytd-rich-item-renderer', title: 'Cards', icon: 'layers', keys: ['design.overlayCards', 'design.perRow', 'design.cardOpacity', 'design.radius', 'yt.hideWatched', 'yt.watchedThreshold', 'yt.hideMixes', 'yt.menuActions'] },
+    { id: 'card', sel: Lull.yt ? Lull.yt.CARDS : 'ytd-rich-item-renderer', title: 'Cards', icon: 'layers', keys: ['design.overlayCards', 'design.perRow', 'yt.quickNotInterested', 'yt.quickWatchLater', 'yt.calmTitles', 'yt.neutralThumbs', 'yt.hideWatched', 'yt.hideMixes', 'yt.menuActions'] },
     { id: 'comments', sel: 'ytd-comments', title: 'Comments', icon: 'eyeOff', keys: ['yt.hideComments'] },
     { id: 'related', sel: 'ytd-watch-flexy #secondary', title: 'Recommendations', icon: 'sidebar', keys: ['yt.hideRelated', 'yt.resizableSidebar', 'yt.sidebarWidth', 'yt.hideShorts'] },
   ];
-  const BACKGROUND = { id: 'background', title: 'Background', icon: 'sparkle', keys: ['design.glass', 'design.background', 'design.bgFrame', 'design.blur', 'design.motion', 'design.sounds', 'design.volume'] };
+  const BACKGROUND = { id: 'background', title: 'Background', icon: 'sparkle', keys: ['design.glass', 'design.background', 'design.bgFrame', 'design.autoNight', 'design.nightBackground', 'design.blur', 'design.motion', 'design.sounds', 'design.volume'] };
 
   function regionAt(x, y) {
     const target = document.elementFromPoint(x, y);

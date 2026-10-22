@@ -29,11 +29,31 @@
   const KEEP = new Set(['data-lull-page', 'data-lull-tokens', 'data-lull-ads-skipped']);
   const VARS = ['--lull-bg', '--lull-surface', '--lull-text', '--lull-text2', '--lull-accent', '--lull-font', '--lull-blur', '--lull-card-alpha', '--lull-radius', '--lull-bg-layer', '--lull-bg-pos', '--lull-bg-zoom', '--lull-per-row', '--lull-name'];
 
-  // The uploaded picture is large; read it once and again only when it changes.
-  let picture;
+  // Uploaded pictures are large; read each once and again only when it changes.
+  const PICTURE_KEY = { custom: 'customBackground', customNight: 'customBackgroundNight' };
+  const pictures = {};
+  async function pictureFor(bg) {
+    const key = PICTURE_KEY[bg];
+    if (!key) return null;
+    if (pictures[bg] === undefined) pictures[bg] = (await chrome.storage.local.get(key))[key] || null;
+    return pictures[bg];
+  }
+
+  // In the evening (when that's switched on) the evening wallpaper stands in
+  // for the day one. Your evening picture is shown centred.
+  function isNight(d) {
+    const h = new Date().getHours();
+    return d.nightFrom > d.nightTo ? h >= d.nightFrom || h < d.nightTo : h >= d.nightFrom && h < d.nightTo;
+  }
+  function effectiveDesign(d) {
+    if (!d.autoNight || !isNight(d)) return d;
+    const bg = d.nightBackground;
+    return { ...d, background: bg, bgFrame: bg === 'custom' ? d.bgFrame : { x: 50, y: 50, zoom: 1 } };
+  }
+
   async function backgroundLayer(d) {
-    if (d.background === 'custom') {
-      if (picture === undefined) ({ customBackground: picture = null } = await chrome.storage.local.get('customBackground'));
+    if (PICTURE_KEY[d.background]) {
+      const picture = await pictureFor(d.background);
       const f = d.bgFrame;
       return picture ? `${f.x}% ${f.y}% / cover no-repeat url("${picture}")` : null;
     }
@@ -141,7 +161,8 @@
   const toneOf = (l) => (l > 0.3 ? 'light' : 'dark');
 
   async function wallpaperTone(d) {
-    if (d.background === 'custom' && picture) {
+    const picture = await pictureFor(d.background);
+    if (picture) {
       const f = d.bgFrame;
       const key = [picture.length, picture.slice(-48), f.x, f.y, f.zoom, innerWidth, innerHeight].join('|');
       if (toneCache.key !== key) {
@@ -197,18 +218,20 @@
           attrs['data-lull-per-row'] = String(d.perRow);
           vars['--lull-per-row'] = String(d.perRow);
         }
-        const layer = await backgroundLayer(d);
+        const eff = effectiveDesign(d);
+        lastNight = eff !== d;
+        const layer = await backgroundLayer(eff);
         if (token !== applyToken) return;
         if (layer) {
-          attrs['data-lull-bg'] = d.background;
-          attrs['data-lull-bg-scheme'] = Lull.BACKGROUNDS[d.background].scheme;
+          attrs['data-lull-bg'] = eff.background;
+          attrs['data-lull-bg-scheme'] = Lull.BACKGROUNDS[eff.background].scheme;
           vars['--lull-bg-layer'] = layer;
-          if (d.background === 'custom') {
-            vars['--lull-bg-pos'] = `${d.bgFrame.x}% ${d.bgFrame.y}%`;
-            vars['--lull-bg-zoom'] = String(d.bgFrame.zoom);
+          if (PICTURE_KEY[eff.background]) {
+            vars['--lull-bg-pos'] = `${eff.bgFrame.x}% ${eff.bgFrame.y}%`;
+            vars['--lull-bg-zoom'] = String(eff.bgFrame.zoom);
           }
         }
-        tone = await wallpaperTone(d);
+        tone = await wallpaperTone(eff);
         if (token !== applyToken) return;
         if (tone) {
           attrs['data-lull-tone'] = tone.page;
@@ -311,20 +334,28 @@
     });
   })();
 
+  // Switch to (or from) the evening wallpaper when the hour comes round.
+  let lastNight = false;
+  setInterval(() => {
+    const s = Lull.settings;
+    if (s && s.design.glass && s.design.autoNight && Lull.alive() && isNight(s.design) !== lastNight) apply(s);
+  }, 60000);
+
   let resizeTimer = 0;
   addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       const s = Lull.settings;
-      if (s && s.design.glass && s.design.background === 'custom' && Lull.alive()) apply(s);
+      if (s && s.design.glass && PICTURE_KEY[effectiveDesign(s.design).background] && Lull.alive()) apply(s);
     }, 400);
   });
 
   Lull.onChange(async (next, changes) => {
     if (!Lull.settings) return;
     if (!next) {
-      if (changes.customBackground) {
-        picture = undefined;
+      if (changes.customBackground || changes.customBackgroundNight) {
+        if (changes.customBackground) pictures.custom = undefined;
+        if (changes.customBackgroundNight) pictures.customNight = undefined;
         await apply(Lull.settings);
       }
       return;

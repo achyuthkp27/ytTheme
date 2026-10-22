@@ -77,4 +77,29 @@
   }
 
   Lull.onMutate(ensure);
+
+  // ---- playback defaults ------------------------------------------------------
+  // Speed and quality are applied by page.js (inside YouTube's page); this side
+  // just hands it the preferences.
+  function sendPlayback() {
+    const on = Lull.settings && Lull.settings.yt.enabled;
+    const prefs = on ? { speed: Lull.settings.yt.speed, quality: Lull.settings.yt.quality } : { speed: 1, quality: 'auto' };
+    document.dispatchEvent(new CustomEvent('lull:playback', { detail: JSON.stringify(prefs) }));
+  }
+  document.addEventListener('lull:hello', sendPlayback);
+
+  // Theater mode: press YouTube's own size button once per watch page.
+  let theaterFor = '';
+  function theater() {
+    if (!Lull.on('yt.theater') || Lull.page !== 'watch' || theaterFor === location.href || document.fullscreenElement) return;
+    const flexy = document.querySelector('ytd-watch-flexy');
+    const button = document.querySelector('#movie_player .ytp-size-button');
+    if (!flexy || !button) return;
+    theaterFor = location.href;
+    if (!flexy.hasAttribute('theater')) button.click();
+  }
+
+  Lull.register({ init: sendPlayback, update: sendPlayback });
+  Lull.onRoute(sendPlayback);
+  Lull.onMutate(theater);
 })();

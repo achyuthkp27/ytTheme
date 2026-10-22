@@ -36,6 +36,20 @@ body {
   letter-spacing: -0.01em;
 }
 
+.watch {
+  margin-left: auto;
+  text-align: right;
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: var(--l-text2);
+}
+
+.watch b {
+  display: block;
+  color: var(--l-text);
+  font-size: 13px;
+}
+
 .brand span {
   color: var(--l-text2);
   font-size: 12px;

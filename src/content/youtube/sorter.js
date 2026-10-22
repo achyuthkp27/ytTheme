@@ -38,18 +38,19 @@
     'intel', 'gpu', 'cpu', 'software', 'coding', 'programming', 'developer', 'developers', 'app', 'apps', 'windows', 'linux', 'macos', 'ios',
     'airpods', 'tesla', 'ev', 'vision pro', 'smartwatch', 'drone', 'robot', 'robots', 'robotics', 'startup', 'quantum', 'semiconductor',
     'tablet', 'headphones', 'keyboard', 'spacex', 'cybersecurity', 'crypto', 'blockchain'];
-  const TOPICS = { all: 'All', ai: 'AI', tech: 'Tech', mine: 'Mine' };
+  // Built-in topics plus your own ("c:<id>"), in the order shown in the bar.
+  const topicOptions = (s) => ({ all: 'All', ai: 'AI', tech: 'Tech', ...Object.fromEntries(s.yt.topics.map((t) => ['c:' + t.id, t.name])) });
   const esc = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const matcher = (words) => (words.length ? new RegExp(`(^|[^\\p{L}\\p{N}])(${words.map(esc).join('|')})(?=$|[^\\p{L}\\p{N}])`, 'iu') : null);
   const BUILT_IN = { ai: matcher(AI), tech: matcher(TECH) };
-  let mine = { key: '', re: null };
-  function topicRe(topic, words) {
-    if (topic === 'mine') {
-      const key = words.join('\n');
-      if (mine.key !== key) mine = { key, re: matcher(words.map((w) => w.trim()).filter(Boolean)) };
-      return mine.re;
-    }
-    return BUILT_IN[topic] || null;
+  const custom = new Map();
+  function topicRe(topic, topics) {
+    if (!topic.startsWith('c:')) return BUILT_IN[topic] || null;
+    const t = topics.find((x) => 'c:' + x.id === topic);
+    if (!t) return null;
+    const sig = t.words.join('\n');
+    if (!custom.has(t.id) || custom.get(t.id).sig !== sig) custom.set(t.id, { sig, re: matcher(t.words.map((w) => w.trim()).filter(Boolean)) });
+    return custom.get(t.id).re;
   }
 
   function stats(item) {
@@ -91,9 +92,9 @@
     const items = [...grid.children].filter((n) => n.tagName === 'YTD-RICH-ITEM-RENDERER');
     const sort = on ? s.subsSort : 'newest';
     const win = on ? s.subsWindow : 'any';
-    const topic = on ? s.subsTopic : 'all';
-    const re = topicRe(topic, s.topicWords);
-    const key = [location.pathname, items.length, sort, win, topic, s.topicWords.join(',')].join('|');
+    const topic = on && s.subsTopic in topicOptions(Lull.settings) ? s.subsTopic : 'all';
+    const re = topicRe(topic, s.topics);
+    const key = [location.pathname, items.length, sort, win, topic, JSON.stringify(s.topics)].join('|');
     if (key === lastKey) return;
     lastKey = key;
 
@@ -107,7 +108,7 @@
       if (re) {
         const info = Lull.yt.cardInfo(item);
         offTopic = !re.test(`${info.title} ${info.channel}`);
-      } else if (topic === 'mine') offTopic = true;
+      } else if (topic.startsWith('c:')) offTopic = true; // a topic with no words yet
       return { item, score, out: old || offTopic, old };
     });
     scored.sort((a, b) => b.score - a.score);
@@ -172,7 +173,8 @@
       }
       return box;
     };
-    const topics = seg(TOPICS, 'yt.subsTopic', 'Topic');
+    const topics = el('div', { class: 'seg', role: 'group', 'aria-label': 'Topic' });
+    let topicSig = '';
     const sorts = seg(SORTS, 'yt.subsSort', 'Sort');
     const windows = seg(WINDOWS, 'yt.subsWindow', 'Uploaded');
     const hint = el('span', { class: 'hint' });
@@ -180,11 +182,13 @@
     root.append(el('div', { class: 'bar' }, topics, sorts, windows, hint, count));
     host.sync = () => {
       const s = Lull.settings.yt;
-      for (const b of topics.children) {
-        b.setAttribute('aria-pressed', String(b.dataset.v === s.subsTopic));
-        // "Mine" appears once you've added topic words.
-        if (b.dataset.v === 'mine') b.hidden = !s.topicWords.length && s.subsTopic !== 'mine';
+      const options = topicOptions(Lull.settings);
+      const sig = JSON.stringify(options);
+      if (sig !== topicSig) {
+        topicSig = sig;
+        topics.replaceChildren(...seg(options, 'yt.subsTopic', 'Topic').children);
       }
+      for (const b of topics.children) b.setAttribute('aria-pressed', String(b.dataset.v === s.subsTopic));
       for (const b of sorts.children) b.setAttribute('aria-pressed', String(b.dataset.v === s.subsSort));
       for (const b of windows.children) b.setAttribute('aria-pressed', String(b.dataset.v === s.subsWindow));
       hint.textContent = HINTS[s.subsSort] || '';

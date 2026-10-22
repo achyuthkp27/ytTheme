@@ -430,7 +430,7 @@ html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-rende
   top: auto !important;
 }
 
-html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .lull-ni {
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .lull-quick {
   top: auto;
   bottom: 9px;
   right: 42px;
@@ -440,6 +440,14 @@ html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-rende
 
 html[data-lull-quick-not-interested][data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupMetadataViewModelTextContainer {
   padding-right: 76px;
+}
+
+html[data-lull-quick-not-interested][data-lull-quick-watch-later][data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .ytLockupMetadataViewModelTextContainer {
+  padding-right: 108px;
+}
+
+html[data-lull="yt"][data-lull-glass][data-lull-overlay] :is(ytd-rich-item-renderer, #related) .lull-wl {
+  right: 74px;
 }
 
 /* Keep stats on one line so every strip is the same slim height. */
@@ -550,6 +558,10 @@ nav.lull-rail svg {
    ends lower (its top margin plus a gap), so pin it that much lower. */
 html[data-lull="yt"][data-lull-glass] ytd-browse tp-yt-app-header#header[fixed] {
   top: calc(var(--lull-top) + 6px) !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-browse tp-yt-app-header#header[data-lull-stuck] #page-header-container {
+  visibility: hidden;
 }
 
 /* Channel tabs: a frosted strip (it sticks to the top while scrolling). */
