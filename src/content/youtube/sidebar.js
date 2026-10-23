@@ -92,9 +92,23 @@
     }
   }
 
+  // A playlist's sort and filter bar is fixed in place at 100% of the window's
+  // width, so it runs past the list to the window's edge. Measure where the
+  // list ends so design.css can stop the bar there.
+  function fitPlaylistBar() {
+    const root = document.documentElement;
+    const page = document.querySelector('ytd-page-manager > ytd-browse[page-subtype="playlist"]:not([hidden])');
+    const bar = page && page.querySelector('.ytItemSectionRendererStickyHeader');
+    const row = bar && page.querySelector('yt-item-section-renderer yt-lockup-view-model, ytd-playlist-video-renderer');
+    const w = row ? Math.round(row.getBoundingClientRect().right - bar.getBoundingClientRect().left) : 0;
+    if (w > 0) root.style.setProperty('--lull-bar-w', w + 'px');
+    else root.style.removeProperty('--lull-bar-w');
+  }
+
   function ensure() {
     ensureRail();
     ensureMasthead();
+    fitPlaylistBar();
     if (!Lull.on('yt.shortcuts')) return;
     const sections = document.querySelector('ytd-guide-renderer #sections');
     if (sections && !sections.querySelector(':scope > .lull-shortcuts')) sections.prepend(build('lull-shortcuts', true));
@@ -104,6 +118,7 @@
   }
 
   Lull.onMutate(ensure);
+  addEventListener('resize', fitPlaylistBar, { passive: true });
 
   // A channel header that has scrolled up is pinned with only its tab bar in
   // view; mark it so the rest of it can't peek out above the floating top bar.

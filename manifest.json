@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ytTheme — calm YouTube",
   "short_name": "ytTheme",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Hide Shorts, ads and noise on YouTube. Glass layout over your own wallpaper, a greeting, themes, and a sort and topic bar.",
   "icons": {
     "16": "icons/icon16.png",

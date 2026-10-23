@@ -219,6 +219,8 @@
       if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest('lull-layer, [contenteditable]')))) return;
       const key = e.key.toLowerCase();
       if (key !== 'n' && key !== 'w') return;
+      // Shift+N is YouTube's own "next video" on the watch page; leave it be.
+      if (key === 'n' && e.shiftKey && Lull.page === 'watch') return;
       e.preventDefault();
       e.stopPropagation();
       if (key === 'n') notInterested(hovered, e.shiftKey);

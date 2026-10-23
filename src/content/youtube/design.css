@@ -166,6 +166,13 @@ html[data-lull="yt"][data-lull-glass] ytd-masthead .ytSearchboxComponentInputBox
   background: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* YouTube's grey placeholder disappears where the bar turns mid-grey over a
+   light picture. */
+html[data-lull="yt"][data-lull-glass] ytd-masthead input::placeholder {
+  color: rgba(255, 255, 255, 0.66) !important;
+  opacity: 1;
+}
+
 html[data-lull="yt"][data-lull-glass] ytd-masthead :is(#voice-search-button button, #buttons button.ytSpecButtonShapeNextTonal) {
   background: rgba(255, 255, 255, 0.08) !important;
   border-radius: 999px !important;
@@ -304,6 +311,46 @@ html[data-lull="yt"][data-lull-glass] :is(ytd-rich-shelf-renderer, ytd-reel-shel
   border-radius: calc(var(--lull-radius) + 4px);
   padding: 12px 16px;
   box-sizing: border-box;
+  margin-bottom: 16px !important;
+}
+
+/* A shelf inside another shelf (the You page nests them) stays flat, so there
+   is one panel, not a panel inside a panel. */
+html[data-lull="yt"][data-lull-glass] :is(ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-shelf-renderer, grid-shelf-view-model, ytd-horizontal-card-list-renderer) :is(ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-shelf-renderer, grid-shelf-view-model, ytd-horizontal-card-list-renderer) {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-bottom: 0 !important;
+}
+
+/* Rich shelves end in a divider with "Show more" sitting on it, inside a tall
+   gap meant to separate shelves. In a panel the gap is empty space and the
+   divider is noise: drop both and keep just enough room for the button. */
+html[data-lull="yt"][data-lull-glass] ytd-rich-shelf-renderer #dismissible {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom: 0 !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-rich-shelf-renderer:has(.button-container:not([hidden]) .expand-collapse-button:not([hidden])) #dismissible {
+  padding-bottom: 33px !important;
+  margin-bottom: 24px !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-rich-shelf-renderer .button-container {
+  background: transparent !important;
+}
+
+/* Cards in a shelf already sit on its panel. Their shadows would be cut off
+   by the shelf's scrolling strip, drawing a box around the row. */
+html[data-lull="yt"][data-lull-glass] :is(ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-shelf-renderer, grid-shelf-view-model, ytd-horizontal-card-list-renderer) :is(ytd-video-renderer, ytd-grid-video-renderer, ytd-channel-renderer, ytd-playlist-renderer, ytd-radio-renderer, yt-lockup-view-model) {
+  box-shadow: none !important;
+}
+
+/* Sections are separated by the gap between panels; YouTube's divider lines
+   between them only add noise. */
+html[data-lull="yt"][data-lull-glass] ytd-browse ytd-item-section-renderer {
+  border-bottom: 0 !important;
 }
 
 /* Watch page. */
@@ -580,7 +627,7 @@ html[data-lull="yt"][data-lull-glass] ytd-browse #tabs-inner-container {
    measured for it (tone attributes from core.js). Buttons keep their own. */
 html[data-lull="yt"][data-lull-glass][data-lull-tone] :is(
   ytd-browse #page-header-container,
-  ytd-browse yt-page-header-renderer,
+  ytd-browse yt-page-header-renderer:not(.page-header-sidebar),
   ytd-browse ytd-item-section-header-renderer,
   yt-section-header-view-model,
   ytd-rich-shelf-renderer #title-container,
@@ -589,6 +636,63 @@ html[data-lull="yt"][data-lull-glass][data-lull-tone] :is(
 ) :is(h1, h2, h3, #title, yt-dynamic-text-view-model, yt-formatted-string, .yt-core-attributed-string, span, a):not(button, button *, yt-button-shape, yt-button-shape *, button-view-model, button-view-model *, [class*="ButtonShape"], [class*="ButtonShape"] *, [role="button"], [role="button"] *) {
   color: var(--lull-on-bg) !important;
   text-shadow: var(--lull-on-bg-shadow);
+}
+
+/* Shelf titles sit on the shelf's own panel, where the glow meant for bare
+   wallpaper shows up as a pale box around the words. */
+html[data-lull="yt"][data-lull-glass][data-lull-tone] :is(ytd-rich-shelf-renderer, ytd-reel-shelf-renderer, ytd-shelf-renderer, grid-shelf-view-model, ytd-horizontal-card-list-renderer) :is(#title-container, yt-section-header-view-model) * {
+  text-shadow: none !important;
+}
+
+/* Playlist pages: YouTube pins the playlist panel at the width of its full
+   sidebar, which the rail replaces; pin it next to the rail instead, where
+   the list leaves room for it. */
+html[data-lull="yt"][data-lull-glass][data-lull-rail]:not([data-lull-page="watch"]) ytd-browse :is(.page-header-sidebar, ytd-playlist-header-renderer, ytd-playlist-sidebar-renderer) {
+  left: 84px !important;
+}
+
+/* The panel's colour wash comes from the playlist's picture and doesn't
+   always load (Watch later often has none); a smoked backing underneath keeps
+   its light text readable either way. */
+html[data-lull="yt"][data-lull-glass] ytd-browse .page-header-sidebar yt-page-header-view-model {
+  background: color-mix(in srgb, var(--lull-surface-eff) 90%, transparent);
+  border: 1px solid var(--lull-glass-line);
+  border-radius: calc(var(--lull-radius) + 6px);
+  box-shadow: var(--lull-glass-shadow);
+  overflow: hidden;
+}
+
+/* The playlist's sort and filter bar stays put while the list scrolls under
+   it. YouTube paints it solid black and as wide as the window; make it a
+   frosted strip that ends with the list (sidebar.js measures --lull-bar-w). */
+html[data-lull="yt"][data-lull-glass] .ytItemSectionRendererStickyHeader {
+  width: var(--lull-bar-w, 100%) !important;
+  background: var(--lull-glass-strong) !important;
+  backdrop-filter: var(--lull-frost);
+  border: 1px solid var(--lull-glass-line);
+  border-radius: calc(var(--lull-radius) + 2px);
+  box-sizing: border-box;
+}
+
+html[data-lull="yt"][data-lull-glass] :is(.ytChipBarViewModelLeftArrowContainer::after, .ytChipBarViewModelRightArrowContainer::before) {
+  background: none !important;
+}
+
+html[data-lull="yt"][data-lull-glass] :is(.ytChipBarViewModelLeftArrow, .ytChipBarViewModelRightArrow) {
+  background: transparent !important;
+}
+
+/* History's side column (search, clear, pause) is plain text on the page;
+   give it a panel like the rest so it reads over any picture. */
+html[data-lull="yt"][data-lull-glass] ytd-browse ytd-browse-feed-actions-renderer {
+  display: block;
+  margin-right: 24px !important;
+  padding: 12px 20px 16px !important;
+  background: var(--lull-glass-strong);
+  border: 1px solid var(--lull-glass-line);
+  border-radius: calc(var(--lull-radius) + 4px);
+  box-shadow: var(--lull-glass-shadow);
+  box-sizing: border-box;
 }
 
 /* A channel header has several lines of small text; a soft frosted backing
