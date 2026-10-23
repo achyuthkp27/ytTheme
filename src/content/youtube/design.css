@@ -654,7 +654,7 @@ html[data-lull="yt"][data-lull-glass][data-lull-rail]:not([data-lull-page="watch
 /* The panel's colour wash comes from the playlist's picture and doesn't
    always load (Watch later often has none); a smoked backing underneath keeps
    its light text readable either way. */
-html[data-lull="yt"][data-lull-glass] ytd-browse .page-header-sidebar yt-page-header-view-model {
+html[data-lull="yt"][data-lull-glass] ytd-browse :is(.page-header-sidebar yt-page-header-view-model, ytd-playlist-header-renderer .immersive-header-container) {
   background: color-mix(in srgb, var(--lull-surface-eff) 90%, transparent);
   border: 1px solid var(--lull-glass-line);
   border-radius: calc(var(--lull-radius) + 6px);
@@ -667,6 +667,19 @@ html[data-lull="yt"][data-lull-glass] ytd-browse .page-header-sidebar yt-page-he
    frosted strip that ends with the list (sidebar.js measures --lull-bar-w). */
 html[data-lull="yt"][data-lull-glass] .ytItemSectionRendererStickyHeader {
   width: var(--lull-bar-w, 100%) !important;
+  background: var(--lull-glass-strong) !important;
+  backdrop-filter: var(--lull-frost);
+  border: 1px solid var(--lull-glass-line);
+  border-radius: calc(var(--lull-radius) + 2px);
+  box-sizing: border-box;
+}
+
+/* Your own playlists (Watch later and the like) use the older layout, where
+   the same bar is the list section's header. It ends 24px short of the
+   window, like the rows under it. */
+html[data-lull="yt"][data-lull-glass] ytd-browse[page-subtype="playlist"] ytd-item-section-renderer > #header {
+  margin-right: 24px;
+  padding: 6px 8px;
   background: var(--lull-glass-strong) !important;
   backdrop-filter: var(--lull-frost);
   border: 1px solid var(--lull-glass-line);
@@ -693,6 +706,36 @@ html[data-lull="yt"][data-lull-glass] ytd-browse ytd-browse-feed-actions-rendere
   border-radius: calc(var(--lull-radius) + 4px);
   box-shadow: var(--lull-glass-shadow);
   box-sizing: border-box;
+}
+
+/* YouTube pins History's side column to the window's right edge, apart from
+   the title and the list. Put it back in the page as a sticky column, so the
+   title, the list and the side column line up as one group. */
+html[data-lull="yt"][data-lull-glass] ytd-browse[page-subtype="history"] ytd-two-column-browse-results-renderer {
+  flex-direction: row !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-browse[page-subtype="history"] ytd-two-column-browse-results-renderer > #secondary {
+  position: sticky !important;
+  top: calc(var(--ytd-masthead-height, 56px) + var(--lull-top) + 16px) !important;
+  order: 2;
+  flex: none;
+  align-self: flex-start;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-browse[page-subtype="history"] ytd-two-column-browse-results-renderer > #primary {
+  flex: 1;
+  min-width: 0;
+  padding-right: 0 !important;
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-browse[page-subtype="history"] ytd-browse-feed-actions-renderer {
+  margin: 0 0 0 16px !important;
+  box-shadow: none; /* the column clips it into a hard edge */
+}
+
+html[data-lull="yt"][data-lull-glass] ytd-browse[page-subtype="history"] #page-header yt-page-header-view-model {
+  margin-bottom: 12px;
 }
 
 /* A channel header has several lines of small text; a soft frosted backing
